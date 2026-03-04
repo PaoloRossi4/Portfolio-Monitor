@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Portfolio Monitor · Eurazeo Growth</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #06101f; --surface: #0c1a2e; --border: #16283f;
+    --text: #c8ddf0; --muted: #3d5a78;
+    --green: #3dffa8; --amber: #f5a623; --purple: #8f9cf5; --red: #ff6b7a;
+  }
+  body { background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; min-height: 100vh; }
+  ::-webkit-scrollbar { width: 5px; background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    padding: 10px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; margin-right: 8px; }
+  .logo-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, #3dffa8, #8f9cf5);
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .logo-title { font-size: 12px; font-weight: 700; color: var(--green); letter-spacing: .06em; }
+  .logo-sub   { font-size: 9px; color: var(--muted); }
+  #company-tabs { display: flex; gap: 5px; flex-wrap: wrap; flex: 1; }
+  .tab-btn {
+    background: transparent; border: 1px solid var(--border); border-radius: 6px;
+    padding: 5px 12px; font-size: 11px; color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .tab-btn.active { background: rgba(61,255,168,.12); border-color: rgba(61,255,168,.35); color: var(--green); }
+  .add-btn {
+    background: rgba(61,255,168,.1); border: 1px solid rgba(61,255,168,.3);
+    border-radius: 7px; padding: 6px 14px; font-size: 11px; color: var(--green);
+    cursor: pointer; white-space: nowrap;
+  }
+
+  /* MAIN */
+  main { padding: 28px; }
+
+  /* DROP ZONE */
+  #drop-zone {
+    max-width: 460px; margin: 64px auto 0;
+    border: 2px dashed var(--border); border-radius: 16px;
+    padding: 56px 40px; text-align: center; cursor: pointer; transition: all .2s;
+  }
+  #drop-zone.over { border-color: var(--green); background: rgba(61,255,168,.04); }
+  #drop-zone h2 { font-size: 16px; color: var(--text); margin-bottom: 8px; }
+  #drop-zone p  { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+  .browse-btn {
+    display: inline-block; background: rgba(61,255,168,.1);
+    border: 1px solid rgba(61,255,168,.3); border-radius: 8px;
+    padding: 8px 22px; font-size: 12px; color: var(--green);
+  }
+
+  /* COMPANY VIEW */
+  #company-view { display: none; }
+  .view-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+  .view-title  { font-size: 22px; font-weight: 700; color: var(--text); }
+  .view-sub    { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .toggle-group { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .toggle-btn {
+    background: transparent; border: none; padding: 8px 18px;
+    font-size: 11px; color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .toggle-btn.active { background: rgba(61,255,168,.12); color: var(--green); }
+  .toggle-btn:disabled { color: var(--border); cursor: not-allowed; }
+
+  /* METRIC GRID */
+  #metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 16px;
+  }
+  .metric-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px 14px;
+  }
+  .card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .card-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .card-name  { font-size: 13px; color: var(--text); font-weight: 600; margin-top: 3px; }
+  .variance-badge {
+    font-size: 11px; font-weight: 700; border-radius: 6px; padding: 3px 8px;
+  }
+  .variance-badge.pos { color: var(--green); background: rgba(61,255,168,.08); border: 1px solid rgba(61,255,168,.2); }
+  .variance-badge.neg { color: var(--red);   background: rgba(255,107,122,.08); border: 1px solid rgba(255,107,122,.2); }
+  .kpi-row  { display: flex; gap: 24px; align-items: flex-end; margin-bottom: 14px; }
+  .kpi-actual { font-size: 24px; font-weight: 700; color: var(--green); line-height: 1; }
+  .kpi-sub    { font-size: 9px; color: var(--muted); margin-top: 3px; }
+  .kpi-budget { font-size: 14px; color: var(--amber); }
+  .chart-wrap { height: 150px; position: relative; }
+  .chart-legend { display: flex; gap: 14px; font-size: 9px; color: var(--muted); margin-top: 10px; }
+  .leg-actual { color: var(--green); }
+  .leg-budget { color: var(--amber); }
+  .leg-ez     { color: var(--purple); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div class="logo-icon">📈</div>
+    <div>
+      <div class="logo-title">PORTFOLIO MONITOR</div>
+      <div class="logo-sub">Eurazeo Growth</div>
+    </div>
+  </div>
+  <div id="company-tabs"></div>
+  <label class="add-btn" title="Add company Excel">
+    + Add Company
+    <input type="file" accept=".xlsx,.xls" style="display:none" id="nav-upload"/>
+  </label>
+</nav>
+
+<main>
+  <!-- Drop zone (shown when no companies) -->
+  <div id="drop-zone">
+    <div style="font-size:40px;margin-bottom:16px">📊</div>
+    <h2>Drop your portfolio Excel here</h2>
+    <p>Needs "Dashboard - Y" and/or "Dashboard - Q" tabs</p>
+    <label class="browse-btn" style="cursor:pointer">
+      Browse files
+      <input type="file" accept=".xlsx,.xls" style="display:none" id="main-upload"/>
+    </label>
+  </div>
+
+  <!-- Company dashboard -->
+  <div id="company-view">
+    <div class="view-header">
+      <div>
+        <div class="view-title" id="view-title">Company Name</div>
+        <div class="view-sub"  id="view-sub"></div>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="btn-yearly"    onclick="switchView('yearly')">Yearly</button>
+        <button class="toggle-btn"        id="btn-quarterly" onclick="switchView('quarterly')">Quarterly</button>
+      </div>
+    </div>
+    <div id="metrics-grid"></div>
+  </div>
+</main>
+
+<script>
+// ─── State ────────────────────────────────────────────────────────────────────
+const companies = [];
+let selectedIdx = -1;
+let currentView = 'yearly';
+const chartInstances = {};
+
+// ─── Parser ───────────────────────────────────────────────────────────────────
+function parseWorkbook(wb) {
+  const yName = wb.SheetNames.find(n => /dashboard\s*[-–]?\s*y$/i.test(n.trim()));
+  const qName = wb.SheetNames.find(n => /dashboard\s*[-–]?\s*q$/i.test(n.trim()));
+  return {
+    yearly:    yName ? parseSheet(wb.Sheets[yName], false) : null,
+    quarterly: qName ? parseSheet(wb.Sheets[qName], true)  : null,
+  };
+}
+
+function parseSheet(sheet, isQuarterly) {
+  const rows = XLSX.utils.sheet_to_json(sheet, { header:1, defval:null, raw:true });
+  if (!rows.length) return null;
+
+  const labelRow = rows[isQuarterly ? 1 : 0] || [];
+  const periods = [];
+  for (let i = 15; i < labelRow.length; i++) {
+    if (labelRow[i] != null && String(labelRow[i]).trim())
+      periods.push({ idx: i, label: String(labelRow[i]).trim() });
+  }
+  if (!periods.length) return null;
+
+  const metrics = [];
+  let cur = null;
+
+  for (let r = 0; r < rows.length; r++) {
+    const row = rows[r];
+    if (!row) continue;
+
+    // Section header: col[1] = positive integer, col[4] = long name
+    if (
+      row[1] !== null && row[1] !== undefined &&
+      typeof row[1] === 'number' && Number.isInteger(row[1]) && row[1] > 0 &&
+      row[4] != null && String(row[4]).trim()
+    ) {
+      cur = {
+        id: r,
+        name:      String(row[4]).trim(),
+        shortName: row[13] ? String(row[13]).trim() : String(row[4]).trim(),
+        actual: null, budget: null, ezBP: null,
+      };
+      metrics.push(cur);
+    }
+
+    if (cur && row[13] != null) {
+      const t = String(row[13]).trim();
+      if (!t) continue;
+      const vals = periods.map(p => {
+        const v = row[p.idx];
+        return (v != null && v !== '') ? Number(v) : null;
+      });
+      if (t === 'Actual')                      cur.actual = vals;
+      else if (t.toLowerCase().startsWith('budget')) cur.budget = vals;
+      else if (t === 'EZ BP')                  cur.ezBP   = vals;
+    }
+  }
+
+  return { periods: periods.map(p => p.label), metrics };
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function isPercent(metric) {
+  const all = [...(metric.actual||[]), ...(metric.budget||[])].filter(v => v != null);
+  return all.length > 0 && all.every(v => Math.abs(v) <= 2);
+}
+
+function fmtVal(v, pct) {
+  if (v == null) return '—';
+  if (pct) return (v * 100).toFixed(1) + '%';
+  if (Math.abs(v) >= 1000) return '$' + (v/1000).toFixed(1) + 'B';
+  return '$' + v.toFixed(0) + 'M';
+}
+
+// ─── File loading ─────────────────────────────────────────────────────────────
+function loadFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(new Uint8Array(e.target.result), { type:'array' });
+      const data = parseWorkbook(wb);
+      if (!data.yearly && !data.quarterly) {
+        alert('Could not find "Dashboard - Y" or "Dashboard - Q" tab in this file.');
+        return;
+      }
+      const name = file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
+      const existing = companies.findIndex(c => c.name === name);
+      if (existing >= 0) {
+        companies[existing].data = data;
+        selectCompany(existing);
+      } else {
+        companies.push({ name, data });
+        selectCompany(companies.length - 1);
+      }
+      renderNav();
+      renderView();
+    } catch(err) {
+      alert('Error reading file: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+function renderNav() {
+  const tabs = document.getElementById('company-tabs');
+  tabs.innerHTML = companies.map((c, i) => `
+    <button class="tab-btn ${i===selectedIdx?'active':''}" onclick="selectCompany(${i})">${c.name}</button>
+  `).join('');
+}
+
+function selectCompany(idx) {
+  selectedIdx = idx;
+  renderNav();
+  renderView();
+}
+
+function switchView(v) {
+  currentView = v;
+  document.getElementById('btn-yearly').classList.toggle('active', v==='yearly');
+  document.getElementById('btn-quarterly').classList.toggle('active', v==='quarterly');
+  renderMetrics();
+}
+
+// ─── View ─────────────────────────────────────────────────────────────────────
+function renderView() {
+  const hasCompanies = companies.length > 0;
+  document.getElementById('drop-zone').style.display    = hasCompanies ? 'none' : 'block';
+  document.getElementById('company-view').style.display = hasCompanies ? 'block' : 'none';
+  if (!hasCompanies) return;
+
+  const c = companies[selectedIdx];
+  document.getElementById('view-title').textContent = c.name;
+
+  const hasY = !!c.data.yearly;
+  const hasQ = !!c.data.quarterly;
+  document.getElementById('btn-yearly').disabled    = !hasY;
+  document.getElementById('btn-quarterly').disabled = !hasQ;
+
+  // Default to first available view
+  if (currentView === 'yearly' && !hasY && hasQ) currentView = 'quarterly';
+  if (currentView === 'quarterly' && !hasQ && hasY) currentView = 'yearly';
+  document.getElementById('btn-yearly').classList.toggle('active', currentView==='yearly');
+  document.getElementById('btn-quarterly').classList.toggle('active', currentView==='quarterly');
+
+  renderMetrics();
+}
+
+function renderMetrics() {
+  const c = companies[selectedIdx];
+  if (!c) return;
+  const sheet = c.data[currentView];
+
+  // Destroy old charts
+  Object.values(chartInstances).forEach(ch => ch.destroy());
+  Object.keys(chartInstances).forEach(k => delete chartInstances[k]);
+
+  const grid = document.getElementById('metrics-grid');
+  if (!sheet || !sheet.metrics.length) {
+    grid.innerHTML = `<div style="color:var(--muted);text-align:center;padding:60px;grid-column:1/-1">No ${currentView} data found.</div>`;
+    document.getElementById('view-sub').textContent = '';
+    return;
+  }
+
+  document.getElementById('view-sub').textContent = `${sheet.metrics.length} metrics · ${sheet.periods.length} periods`;
+
+  grid.innerHTML = sheet.metrics.map(m => buildCardHTML(m, sheet.periods)).join('');
+
+  // Init charts after DOM render
+  setTimeout(() => {
+    sheet.metrics.forEach(m => initChart(m, sheet.periods));
+  }, 0);
+}
+
+function buildCardHTML(metric, periods) {
+  const pct = isPercent(metric);
+  const lastActIdx = (metric.actual||[]).reduce((a,v,i) => v!=null?i:a, -1);
+  const lastAct    = lastActIdx >= 0 ? metric.actual[lastActIdx] : null;
+  const lastBud    = metric.budget?.[lastActIdx] ?? null;
+  const variance   = (lastAct != null && lastBud != null) ? lastAct - lastBud : null;
+  const varPct     = (variance != null && lastBud !== 0) ? (variance/Math.abs(lastBud))*100 : null;
+  const positive   = variance != null ? variance >= 0 : null;
+
+  let badgeHTML = '';
+  if (variance != null) {
+    const arrow = variance > 0 ? '▲' : '▼';
+    const cls   = positive ? 'pos' : 'neg';
+    const absV  = pct
+      ? Math.abs(variance*100).toFixed(1) + 'pp'
+      : (Math.abs(variance)>=1000 ? (Math.abs(variance)/1000).toFixed(1)+'B' : Math.abs(variance).toFixed(0)+'M');
+    const pctStr = varPct != null ? ` (${Math.abs(varPct).toFixed(0)}%)` : '';
+    badgeHTML = `<span class="variance-badge ${cls}">${arrow} ${absV}<span style="opacity:.7;font-weight:400">${pctStr}</span></span>`;
+  }
+
+  let kpiHTML = '';
+  if (lastAct != null) {
+    kpiHTML = `<div class="kpi-row">
+      <div>
+        <div class="kpi-actual">${fmtVal(lastAct, pct)}</div>
+        <div class="kpi-sub">${periods[lastActIdx]} · Actual</div>
+      </div>
+      ${lastBud != null ? `<div><div class="kpi-budget">${fmtVal(lastBud,pct)}</div><div class="kpi-sub">Budget</div></div>` : ''}
+    </div>`;
+  }
+
+  return `<div class="metric-card">
+    <div class="card-head">
+      <div>
+        <div class="card-label">${metric.shortName}</div>
+        <div class="card-name">${metric.name}</div>
+      </div>
+      ${badgeHTML}
+    </div>
+    ${kpiHTML}
+    <div class="chart-wrap"><canvas id="chart-${metric.id}"></canvas></div>
+    <div class="chart-legend">
+      ${metric.actual ? '<span class="leg-actual">─── Actual</span>' : ''}
+      ${metric.budget ? '<span class="leg-budget">- - Budget</span>' : ''}
+      ${metric.ezBP   ? '<span class="leg-ez">··· EZ BP</span>'      : ''}
+    </div>
+  </div>`;
+}
+
+function initChart(metric, periods) {
+  const canvas = document.getElementById('chart-' + metric.id);
+  if (!canvas) return;
+
+  const pct    = isPercent(metric);
+  const scale  = pct ? 100 : 1;
+  const labels = periods;
+
+  const datasets = [];
+  if (metric.actual) datasets.push({
+    label: 'Actual', data: metric.actual.map(v => v!=null ? +(v*scale).toFixed(2) : null),
+    borderColor: '#3dffa8', borderWidth: 2,
+    pointRadius: 0, spanGaps: true, tension: 0.3,
+  });
+  if (metric.budget) datasets.push({
+    label: 'Budget', data: metric.budget.map(v => v!=null ? +(v*scale).toFixed(2) : null),
+    borderColor: '#f5a623', borderWidth: 1.5, borderDash: [5,3],
+    pointRadius: 0, spanGaps: true, tension: 0.3,
+  });
+  if (metric.ezBP) datasets.push({
+    label: 'EZ BP', data: metric.ezBP.map(v => v!=null ? +(v*scale).toFixed(2) : null),
+    borderColor: '#8f9cf5', borderWidth: 1.5, borderDash: [2,4],
+    pointRadius: 0, spanGaps: true, tension: 0.3,
+  });
+
+  const suffix = pct ? '%' : 'M';
+  chartInstances[metric.id] = new Chart(canvas, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f1e33',
+          borderColor: '#16283f', borderWidth: 1,
+          titleColor: '#3dffa8', bodyColor: '#c8ddf0',
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}${suffix}`,
+          }
+        },
+      },
+      scales: {
+        x: {
+          grid: { color: '#0f2036' },
+          ticks: { color: '#3d5a78', font: { size: 9 }, maxTicksLimit: 8 },
+          border: { display: false },
+        },
+        y: {
+          grid: { color: '#0f2036' },
+          ticks: {
+            color: '#3d5a78', font: { size: 9 },
+            callback: v => Math.abs(v)>=1000 ? (v/1000).toFixed(1)+'B' : v+suffix,
+          },
+          border: { display: false },
+        },
+      },
+    },
+  });
+}
+
+// ─── Event wiring ─────────────────────────────────────────────────────────────
+document.getElementById('main-upload').addEventListener('change', e => loadFile(e.target.files[0]));
+document.getElementById('nav-upload').addEventListener('change',  e => { loadFile(e.target.files[0]); e.target.value=''; });
+
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('over');
+  loadFile(e.dataTransfer.files[0]);
+});
+</script>
+</body>
+</html>
