@@ -7,908 +7,450 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#06101f;--surface:#0c1a2e;--surface2:#101f35;--border:#16283f;
-  --text:#c8ddf0;--muted:#3d5a78;
-  --green:#3dffa8;--amber:#f5a623;--purple:#8f9cf5;--red:#ff6b7a;
-}
-body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min-height:100vh}
-::-webkit-scrollbar{width:5px;background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #06101f; --surface: #0c1a2e; --border: #16283f;
+    --text: #c8ddf0; --muted: #3d5a78;
+    --green: #3dffa8; --amber: #f5a623; --purple: #8f9cf5; --red: #ff6b7a;
+  }
+  body { background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; min-height: 100vh; }
+  ::-webkit-scrollbar { width: 5px; background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-/* ── NAV ── */
-nav{
-  position:sticky;top:0;z-index:100;background:var(--bg);
-  border-bottom:1px solid var(--border);padding:10px 24px;
-  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-}
-.logo{display:flex;align-items:center;gap:10px;margin-right:8px;flex-shrink:0}
-.logo-img{height:28px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.9}
-.logo-fallback{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#3dffa8,#8f9cf5);display:none;align-items:center;justify-content:center;font-size:16px}
-.logo-title{font-size:12px;font-weight:700;color:var(--green);letter-spacing:.06em}
-.logo-sub{font-size:9px;color:var(--muted)}
-#company-tabs{display:flex;gap:8px;flex-wrap:wrap;flex:1}
-.tab-btn{
-  background:transparent;border:1px solid var(--border);border-radius:8px;
-  padding:5px 12px 5px 8px;font-size:11px;color:var(--muted);
-  cursor:pointer;transition:all .15s;font-family:inherit;
-  display:flex;align-items:center;gap:7px;
-}
-.tab-btn.active{background:rgba(61,255,168,.12);border-color:rgba(61,255,168,.35);color:var(--green);font-weight:600}
-.tab-btn:hover:not(.active){color:var(--text);border-color:var(--muted)}
-.tab-logo{width:20px;height:20px;border-radius:4px;object-fit:contain;background:#fff;padding:2px;flex-shrink:0}
-.tab-logo-fb{width:20px;height:20px;border-radius:4px;background:linear-gradient(135deg,#3dffa8,#8f9cf5);display:none;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#06101f;flex-shrink:0}
-.add-btn{
-  background:rgba(61,255,168,.1);border:1px solid rgba(61,255,168,.3);
-  border-radius:7px;padding:6px 14px;font-size:11px;color:var(--green);
-  cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;
-  font-family:inherit;flex-shrink:0;
-}
-.key-btn{
-  background:transparent;border:1px solid var(--border);
-  border-radius:7px;padding:6px 12px;font-size:10px;color:var(--muted);
-  cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .15s;
-}
-.key-btn:hover{color:var(--text);border-color:var(--muted)}
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    padding: 10px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; margin-right: 8px; }
+  .logo-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, #3dffa8, #8f9cf5);
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .logo-title { font-size: 12px; font-weight: 700; color: var(--green); letter-spacing: .06em; }
+  .logo-sub   { font-size: 9px; color: var(--muted); }
+  #company-tabs { display: flex; gap: 5px; flex-wrap: wrap; flex: 1; }
+  .tab-btn {
+    background: transparent; border: 1px solid var(--border); border-radius: 6px;
+    padding: 5px 12px; font-size: 11px; color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .tab-btn.active { background: rgba(61,255,168,.12); border-color: rgba(61,255,168,.35); color: var(--green); }
+  .add-btn {
+    background: rgba(61,255,168,.1); border: 1px solid rgba(61,255,168,.3);
+    border-radius: 7px; padding: 6px 14px; font-size: 11px; color: var(--green);
+    cursor: pointer; white-space: nowrap;
+  }
 
-/* ── MAIN ── */
-main{padding:28px}
+  /* MAIN */
+  main { padding: 28px; }
 
-/* ── API KEY SCREEN ── */
-#key-screen{
-  max-width:480px;margin:80px auto;text-align:center;
-}
-#key-screen h2{font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px}
-#key-screen p{font-size:13px;color:var(--muted);margin-bottom:32px;line-height:1.6}
-.key-input-wrap{position:relative;margin-bottom:12px}
-.key-input-wrap input{
-  width:100%;background:var(--surface);border:1px solid var(--border);
-  border-radius:10px;padding:12px 48px 12px 16px;
-  font-size:12px;color:var(--text);font-family:'Courier New',monospace;
-  outline:none;transition:border-color .2s;
-}
-.key-input-wrap input:focus{border-color:rgba(61,255,168,.4)}
-.key-input-wrap input::placeholder{color:var(--muted)}
-.eye-btn{
-  position:absolute;right:12px;top:50%;transform:translateY(-50%);
-  background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;
-}
-.primary-btn{
-  width:100%;background:linear-gradient(135deg,rgba(61,255,168,.15),rgba(143,156,245,.15));
-  border:1px solid rgba(61,255,168,.3);border-radius:10px;
-  padding:12px;font-size:13px;color:var(--green);font-weight:600;
-  cursor:pointer;font-family:inherit;transition:all .2s;
-}
-.primary-btn:hover{background:linear-gradient(135deg,rgba(61,255,168,.25),rgba(143,156,245,.25))}
-.primary-btn:disabled{opacity:.5;cursor:not-allowed}
-.key-note{font-size:10px;color:var(--muted);margin-top:10px}
+  /* DROP ZONE */
+  #drop-zone {
+    max-width: 460px; margin: 64px auto 0;
+    border: 2px dashed var(--border); border-radius: 16px;
+    padding: 56px 40px; text-align: center; cursor: pointer; transition: all .2s;
+  }
+  #drop-zone.over { border-color: var(--green); background: rgba(61,255,168,.04); }
+  #drop-zone h2 { font-size: 16px; color: var(--text); margin-bottom: 8px; }
+  #drop-zone p  { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+  .browse-btn {
+    display: inline-block; background: rgba(61,255,168,.1);
+    border: 1px solid rgba(61,255,168,.3); border-radius: 8px;
+    padding: 8px 22px; font-size: 12px; color: var(--green);
+  }
 
-/* ── COMPANY VIEW ── */
-#company-view{display:none}
-.company-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-.company-title{font-size:24px;font-weight:700;color:var(--text)}
-.currency-tag{font-size:10px;color:var(--amber);background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);border-radius:4px;padding:2px 8px;margin-left:8px;vertical-align:middle}
-.company-meta{font-size:11px;color:var(--muted);margin-top:3px}
-.toggle-group{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
-.toggle-btn{background:transparent;border:none;padding:8px 20px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .15s;font-family:inherit}
-.toggle-btn.active{background:rgba(61,255,168,.12);color:var(--green);font-weight:600}
-.toggle-btn:disabled{color:var(--border);cursor:not-allowed}
-#metrics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px}
-.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px 14px}
-.card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
-.card-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.card-name{font-size:13px;color:var(--text);font-weight:600;margin-top:3px}
-.vbadge{font-size:11px;font-weight:700;border-radius:6px;padding:3px 8px;white-space:nowrap}
-.vbadge.pos{color:var(--green);background:rgba(61,255,168,.08);border:1px solid rgba(61,255,168,.2)}
-.vbadge.neg{color:var(--red);background:rgba(255,107,122,.08);border:1px solid rgba(255,107,122,.2)}
-.kpi-row{display:flex;gap:24px;align-items:flex-end;margin-bottom:14px}
-.kpi-val{font-size:26px;font-weight:700;color:var(--green);line-height:1}
-.kpi-sub{font-size:9px;color:var(--muted);margin-top:3px}
-.kpi-bud{font-size:14px;color:var(--amber)}
-.chart-wrap{height:150px;position:relative}
-.chart-legend{display:flex;gap:14px;font-size:9px;margin-top:10px;flex-wrap:wrap;color:var(--muted)}
+  /* COMPANY VIEW */
+  #company-view { display: none; }
+  .view-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+  .view-title  { font-size: 22px; font-weight: 700; color: var(--text); }
+  .view-sub    { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .toggle-group { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .toggle-btn {
+    background: transparent; border: none; padding: 8px 18px;
+    font-size: 11px; color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .toggle-btn.active { background: rgba(61,255,168,.12); color: var(--green); }
+  .toggle-btn:disabled { color: var(--border); cursor: not-allowed; }
 
-/* ── EMPTY / UPLOAD ── */
-#empty-state{padding-top:64px;display:none}
-.drop-zone{
-  max-width:460px;margin:0 auto;
-  border:2px dashed var(--border);border-radius:16px;
-  padding:56px 40px;text-align:center;cursor:pointer;transition:all .2s;
-}
-.drop-zone.over{border-color:var(--green);background:rgba(61,255,168,.04)}
-.drop-zone h2{font-size:16px;color:var(--text);margin-bottom:8px}
-.drop-zone p{font-size:12px;color:var(--muted);margin-bottom:20px}
-.browse-btn{display:inline-block;background:rgba(61,255,168,.1);border:1px solid rgba(61,255,168,.3);border-radius:8px;padding:8px 22px;font-size:12px;color:var(--green);cursor:pointer}
-
-/* ── PREVIEW MODAL ── */
-#preview-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;
-  display:none;align-items:center;justify-content:center;padding:20px;
-}
-#preview-modal{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:16px;width:100%;max-width:640px;max-height:85vh;
-  overflow-y:auto;padding:28px;
-}
-#preview-modal h3{font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px}
-#preview-modal .sub{font-size:12px;color:var(--muted);margin-bottom:20px}
-.kpi-preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:20px}
-.kpi-preview-item{
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .15s;
-}
-.kpi-preview-item.selected{border-color:rgba(61,255,168,.4);background:rgba(61,255,168,.06)}
-.kpi-preview-item .kpi-p-name{font-size:12px;font-weight:600;color:var(--text)}
-.kpi-preview-item .kpi-p-meta{font-size:10px;color:var(--muted);margin-top:3px}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end}
-.btn-cancel{background:transparent;border:1px solid var(--border);border-radius:8px;padding:9px 20px;font-size:12px;color:var(--muted);cursor:pointer;font-family:inherit}
-.btn-confirm{background:rgba(61,255,168,.12);border:1px solid rgba(61,255,168,.3);border-radius:8px;padding:9px 20px;font-size:12px;color:var(--green);font-weight:600;cursor:pointer;font-family:inherit}
-
-/* ── LOADING ── */
-#loading-overlay{
-  position:fixed;inset:0;background:rgba(6,16,31,.85);z-index:300;
-  display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;
-}
-.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:13px;color:var(--muted)}
-
-/* ── ERROR TOAST ── */
-#toast{
-  position:fixed;bottom:24px;right:380px;z-index:400;
-  background:#1a0a0e;border:1px solid rgba(255,107,122,.3);
-  border-radius:10px;padding:12px 18px;font-size:12px;color:var(--red);
-  display:none;max-width:320px;
-}
-
-/* ── CHAT PANEL ── */
-#chat-panel{
-  position:fixed;right:0;top:0;bottom:0;width:360px;
-  background:var(--surface);border-left:1px solid var(--border);
-  display:flex;flex-direction:column;z-index:50;
-  transform:translateX(100%);transition:transform .25s ease;
-}
-#chat-panel.open{ transform:translateX(0); }
-body.chat-open main{ margin-right:360px; }
-body.chat-open nav{ padding-right:calc(360px + 24px); }
-
-.chat-header{
-  padding:14px 16px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
-}
-.chat-header-left{display:flex;align-items:center;gap:8px}
-.chat-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.chat-title{font-size:13px;font-weight:600;color:var(--text)}
-.chat-sub{font-size:10px;color:var(--muted)}
-.chat-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1}
-
-#chat-messages{
-  flex:1;overflow-y:auto;padding:16px;
-  display:flex;flex-direction:column;gap:12px;
-}
-.msg{display:flex;flex-direction:column;gap:4px;max-width:90%}
-.msg.user{align-self:flex-end;align-items:flex-end}
-.msg.ai{align-self:flex-start;align-items:flex-start}
-.msg-bubble{
-  padding:10px 14px;border-radius:12px;font-size:12px;line-height:1.5;
-}
-.msg.user .msg-bubble{background:rgba(61,255,168,.12);border:1px solid rgba(61,255,168,.2);color:var(--text)}
-.msg.ai .msg-bubble{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
-.msg-time{font-size:9px;color:var(--muted)}
-
-.chat-suggestions{
-  padding:0 16px 12px;display:flex;flex-direction:column;gap-y:6px;gap:6px;
-  flex-shrink:0;
-}
-.suggestion-chip{
-  background:transparent;border:1px solid var(--border);border-radius:20px;
-  padding:5px 12px;font-size:10px;color:var(--muted);cursor:pointer;
-  text-align:left;font-family:inherit;transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.suggestion-chip:hover{border-color:var(--green);color:var(--green)}
-
-.chat-input-wrap{
-  padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;
-  display:flex;gap:8px;align-items:flex-end;
-}
-#chat-input{
-  flex:1;background:var(--bg);border:1px solid var(--border);
-  border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text);
-  font-family:inherit;resize:none;outline:none;max-height:100px;
-  transition:border-color .2s;line-height:1.4;
-}
-#chat-input:focus{border-color:rgba(61,255,168,.35)}
-#chat-input::placeholder{color:var(--muted)}
-#chat-send{
-  background:rgba(61,255,168,.15);border:1px solid rgba(61,255,168,.3);
-  border-radius:8px;width:36px;height:36px;color:var(--green);
-  cursor:pointer;font-size:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
-}
-#chat-send:disabled{opacity:.4;cursor:not-allowed}
-
-/* Chat toggle button */
-#chat-toggle{
-  position:fixed;bottom:24px;right:24px;z-index:60;
-  background:linear-gradient(135deg,rgba(61,255,168,.2),rgba(143,156,245,.2));
-  border:1px solid rgba(61,255,168,.35);border-radius:50%;
-  width:52px;height:52px;color:var(--green);font-size:22px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 20px rgba(0,0,0,.4);transition:all .2s;
-}
-#chat-toggle:hover{transform:scale(1.08)}
-#chat-toggle.hidden{display:none}
+  /* METRIC GRID */
+  #metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 16px;
+  }
+  .metric-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px 14px;
+  }
+  .card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .card-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .card-name  { font-size: 13px; color: var(--text); font-weight: 600; margin-top: 3px; }
+  .variance-badge {
+    font-size: 11px; font-weight: 700; border-radius: 6px; padding: 3px 8px;
+  }
+  .variance-badge.pos { color: var(--green); background: rgba(61,255,168,.08); border: 1px solid rgba(61,255,168,.2); }
+  .variance-badge.neg { color: var(--red);   background: rgba(255,107,122,.08); border: 1px solid rgba(255,107,122,.2); }
+  .kpi-row  { display: flex; gap: 24px; align-items: flex-end; margin-bottom: 14px; }
+  .kpi-actual { font-size: 24px; font-weight: 700; color: var(--green); line-height: 1; }
+  .kpi-sub    { font-size: 9px; color: var(--muted); margin-top: 3px; }
+  .kpi-budget { font-size: 14px; color: var(--amber); }
+  .chart-wrap { height: 150px; position: relative; }
+  .chart-legend { display: flex; gap: 14px; font-size: 9px; color: var(--muted); margin-top: 10px; }
+  .leg-actual { color: var(--green); }
+  .leg-budget { color: var(--amber); }
+  .leg-ez     { color: var(--purple); }
 </style>
 </head>
 <body>
 
 <nav>
   <div class="logo">
-    <img src="https://logo.clearbit.com/eurazeo.com" alt="Eurazeo" class="logo-img"
-      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-    <div class="logo-fallback">📈</div>
-    <div><div class="logo-title">PORTFOLIO MONITOR</div><div class="logo-sub">Eurazeo Growth</div></div>
+    <div class="logo-icon">📈</div>
+    <div>
+      <div class="logo-title">PORTFOLIO MONITOR</div>
+      <div class="logo-sub">Eurazeo Growth</div>
+    </div>
   </div>
   <div id="company-tabs"></div>
-  <label class="add-btn" id="add-btn-label" style="display:none">
+  <label class="add-btn" title="Add company Excel">
     + Add Company
     <input type="file" accept=".xlsx,.xls" style="display:none" id="nav-upload"/>
   </label>
-  <button class="key-btn" id="key-settings-btn" style="display:none" onclick="showKeyScreen()">🔑 API Key</button>
 </nav>
 
 <main>
-  <!-- API Key Screen -->
-  <div id="key-screen">
-    <div style="font-size:48px;margin-bottom:20px">🔑</div>
-    <h2>Enter your Anthropic API Key</h2>
-    <p>Your key is stored only in this browser session.<br>It's never sent anywhere except directly to Anthropic.</p>
-    <div class="key-input-wrap">
-      <input type="password" id="key-input" placeholder="sk-ant-api03-..." />
-      <button class="eye-btn" onclick="toggleKeyVisibility()">👁</button>
-    </div>
-    <button class="primary-btn" onclick="saveKey()">Continue →</button>
-    <div class="key-note">Get your key at console.anthropic.com → API Keys</div>
-  </div>
-
-  <!-- Empty state (after key set, before companies) -->
-  <div id="empty-state">
-    <div style="text-align:center;margin-bottom:40px">
-      <div style="font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px">Portfolio Performance Dashboard</div>
-      <div style="font-size:13px;color:var(--muted)">Upload an Excel file per company — Claude AI will detect all KPIs automatically</div>
-    </div>
-    <div class="drop-zone" id="drop-zone">
-      <div style="font-size:40px;margin-bottom:16px">📊</div>
-      <h2>Drop your portfolio Excel here</h2>
-      <p>Claude AI will read any Excel structure and detect all KPIs</p>
-      <label class="browse-btn">Browse files<input type="file" accept=".xlsx,.xls" style="display:none" id="main-upload"/></label>
-    </div>
+  <!-- Drop zone (shown when no companies) -->
+  <div id="drop-zone">
+    <div style="font-size:40px;margin-bottom:16px">📊</div>
+    <h2>Drop your portfolio Excel here</h2>
+    <p>Needs "Dashboard - Y" and/or "Dashboard - Q" tabs</p>
+    <label class="browse-btn" style="cursor:pointer">
+      Browse files
+      <input type="file" accept=".xlsx,.xls" style="display:none" id="main-upload"/>
+    </label>
   </div>
 
   <!-- Company dashboard -->
   <div id="company-view">
-    <div class="company-header">
+    <div class="view-header">
       <div>
-        <div class="company-title" id="view-title"></div>
-        <div class="company-meta" id="view-meta"></div>
+        <div class="view-title" id="view-title">Company Name</div>
+        <div class="view-sub"  id="view-sub"></div>
       </div>
       <div class="toggle-group">
-        <button class="toggle-btn" id="btn-monthly"   onclick="switchView('monthly')">Monthly</button>
-        <button class="toggle-btn" id="btn-yearly"    onclick="switchView('yearly')">Yearly</button>
-        <button class="toggle-btn" id="btn-quarterly" onclick="switchView('quarterly')">Quarterly</button>
+        <button class="toggle-btn active" id="btn-yearly"    onclick="switchView('yearly')">Yearly</button>
+        <button class="toggle-btn"        id="btn-quarterly" onclick="switchView('quarterly')">Quarterly</button>
       </div>
     </div>
     <div id="metrics-grid"></div>
   </div>
 </main>
 
-<!-- Preview Modal -->
-<div id="preview-overlay">
-  <div id="preview-modal">
-    <h3 id="preview-title">KPIs found</h3>
-    <div class="sub" id="preview-sub"></div>
-    <div class="kpi-preview-grid" id="kpi-preview-grid"></div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closePreview()">Cancel</button>
-      <button class="btn-confirm" onclick="confirmKPIs()">Add to Dashboard →</button>
-    </div>
-  </div>
-</div>
-
-<!-- Loading -->
-<div id="loading-overlay">
-  <div class="spinner"></div>
-  <div class="loading-text" id="loading-text">Claude AI is reading your Excel…</div>
-</div>
-
-<!-- Chat Panel -->
-<div id="chat-panel">
-  <div class="chat-header">
-    <div class="chat-header-left">
-      <div class="chat-dot"></div>
-      <div>
-        <div class="chat-title">Ask your portfolio</div>
-        <div class="chat-sub">Powered by Claude AI</div>
-      </div>
-    </div>
-    <button class="chat-close" onclick="toggleChat()">✕</button>
-  </div>
-
-  <div id="chat-messages">
-    <div class="msg ai">
-      <div class="msg-bubble">Hi Paolo! I can see your portfolio data. Ask me anything — comparisons, trends, specific KPIs, or ask me to filter the dashboard. What would you like to know?</div>
-      <div class="msg-time">Claude AI</div>
-    </div>
-  </div>
-
-  <div class="chat-suggestions" id="chat-suggestions">
-    <div style="font-size:9px;color:var(--muted);margin-bottom:2px">SUGGESTIONS</div>
-    <button class="suggestion-chip" onclick="sendSuggestion(this)">What's the ARR growth trend?</button>
-    <button class="suggestion-chip" onclick="sendSuggestion(this)">Show only EBITDA and Revenue</button>
-    <button class="suggestion-chip" onclick="sendSuggestion(this)">Which company has best gross margin?</button>
-    <button class="suggestion-chip" onclick="sendSuggestion(this)">Summarise the current company</button>
-  </div>
-
-  <div class="chat-input-wrap">
-    <textarea id="chat-input" placeholder="Ask about your portfolio…" rows="1"
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
-    <button id="chat-send" onclick="sendChat()">↑</button>
-  </div>
-</div>
-
-<!-- Chat Toggle -->
-<button id="chat-toggle" onclick="toggleChat()" title="Chat with your portfolio">💬</button>
-
-<!-- Toast -->
-<div id="toast"></div>
-
 <script>
-// ─── State ────────────────────────────────────────────────────────────────
-let apiKey = sessionStorage.getItem('ez_api_key') || '';
-let companies = [];
-let sel = -1, view = null;
-const charts = {};
-let pendingCompany = null; // holds parsed data waiting for confirmation
+// ─── State ────────────────────────────────────────────────────────────────────
+const companies = [];
+let selectedIdx = -1;
+let currentView = 'yearly';
+const chartInstances = {};
 
-// ─── Init ─────────────────────────────────────────────────────────────────
-if(apiKey) showDashboard();
-else showKeyScreen();
-
-// ─── Key management ───────────────────────────────────────────────────────
-function showKeyScreen(){
-  document.getElementById('key-screen').style.display='block';
-  document.getElementById('empty-state').style.display='none';
-  document.getElementById('company-view').style.display='none';
-  document.getElementById('add-btn-label').style.display='none';
-  document.getElementById('key-settings-btn').style.display='none';
-}
-
-function showDashboard(){
-  document.getElementById('key-screen').style.display='none';
-  document.getElementById('key-settings-btn').style.display='block';
-  document.getElementById('add-btn-label').style.display='flex';
-  if(companies.length===0){
-    document.getElementById('empty-state').style.display='block';
-    document.getElementById('company-view').style.display='none';
-  } else {
-    document.getElementById('empty-state').style.display='none';
-    document.getElementById('company-view').style.display='block';
-  }
-}
-
-function toggleKeyVisibility(){
-  const inp = document.getElementById('key-input');
-  inp.type = inp.type==='password' ? 'text' : 'password';
-}
-
-function saveKey(){
-  const k = document.getElementById('key-input').value.trim();
-  if(!k.startsWith('sk-ant')){showToast('Invalid key — should start with sk-ant…');return;}
-  apiKey = k;
-  sessionStorage.setItem('ez_api_key', k);
-  showDashboard();
-}
-
-// ─── File loading ─────────────────────────────────────────────────────────
-function setupFileInputs(){
-  document.getElementById('nav-upload').addEventListener('change', e=>{
-    if(e.target.files[0]) loadFile(e.target.files[0]);
-    e.target.value='';
-  });
-  document.getElementById('main-upload').addEventListener('change', e=>{
-    if(e.target.files[0]) loadFile(e.target.files[0]);
-  });
-  const dz = document.getElementById('drop-zone');
-  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
-  dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
-  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0])});
-}
-setupFileInputs();
-
-async function loadFile(file){
-  showLoading('Reading Excel file…');
-  try {
-    const ab = await file.arrayBuffer();
-    const wb = XLSX.read(new Uint8Array(ab), {type:'array'});
-    const companyName = file.name.replace(/\.[^.]+$/,'').replace(/[_-]/g,' ').trim();
-
-    // Build a text representation of all sheets
-    let excelText = `Company: ${companyName}\n\n`;
-    for(const sheetName of wb.SheetNames){
-      if(sheetName.startsWith('PB_') || sheetName.startsWith('CACHE')) continue;
-      const ws = wb.Sheets[sheetName];
-      const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:false});
-      // Take first 80 rows max per sheet
-      const sample = rows.slice(0,80).map(r=>r.slice(0,30).join('\t')).join('\n');
-      if(sample.trim()) excelText += `--- Sheet: ${sheetName} ---\n${sample}\n\n`;
-    }
-
-    // Trim to ~15k chars to fit context
-    if(excelText.length > 15000) excelText = excelText.slice(0,15000) + '\n[truncated]';
-
-    updateLoading('Claude AI is analysing the KPIs…');
-    const result = await callClaude(excelText, companyName, wb.SheetNames);
-
-    hideLoading();
-    if(!result) return;
-    showPreview(result, companyName);
-  } catch(err){
-    hideLoading();
-    showToast('Error: '+err.message);
-  }
-}
-
-// ─── Claude API call ──────────────────────────────────────────────────────
-async function callClaude(excelText, companyName, sheetNames){
-  const prompt = `You are a financial analyst at a growth equity fund. You are given the raw content of an Excel file for a portfolio company.
-
-Your job is to:
-1. Identify ALL meaningful KPI metrics to track (e.g. ARR, Revenue, EBITDA, Gross Margin, Cash, FTE, etc.)
-2. For each KPI, extract the time series data: Actual values, Budget/Forecast values, and EZ BP values if present
-3. Determine if the data is monthly, quarterly, or yearly
-4. Return ONLY a valid JSON object — no explanation, no markdown, no backticks
-
-Excel content:
-${excelText}
-
-Return this exact JSON structure:
-{
-  "companyName": "${companyName}",
-  "currency": "USD $M or GBP '000 etc — infer from file",
-  "views": {
-    "yearly": {
-      "periods": ["FY21A","FY22A",...],
-      "kpis": [
-        {"name":"ARR","actual":[107,139,...],"budget":[107,156,...],"ezBP":[112,165,...]}
-      ]
-    },
-    "quarterly": {
-      "periods": ["Q1-21","Q2-21",...],
-      "kpis": [...]
-    },
-    "monthly": {
-      "periods": ["Jan-24","Feb-24",...],
-      "kpis": [...]
-    }
-  }
-}
-
-Rules:
-- Only include views (yearly/quarterly/monthly) that actually have data
-- Use null for missing values in arrays
-- For percentages like Gross Margin %, keep as decimal (0.75 not 75)
-- Periods must be strings like "FY23A", "Q1-24", "Jan-24"
-- Remove views with no real data
-- Return ONLY the JSON, nothing else`;
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:4000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-
-    if(!resp.ok){
-      const err = await resp.json();
-      throw new Error(err.error?.message || 'API error '+resp.status);
-    }
-
-    const data = await resp.json();
-    const text = data.content[0].text.trim();
-
-    // Strip any markdown fences just in case
-    const clean = text.replace(/^```json?\n?/,'').replace(/\n?```$/,'').trim();
-    return JSON.parse(clean);
-  } catch(err){
-    showToast('Claude API error: '+err.message);
-    return null;
-  }
-}
-
-// ─── Preview Modal ────────────────────────────────────────────────────────
-function showPreview(data, filename){
-  pendingCompany = data;
-  document.getElementById('preview-title').textContent = `KPIs found in ${data.companyName}`;
-
-  const allViews = Object.keys(data.views||{});
-  const totalKPIs = allViews.reduce((s,v)=>s+(data.views[v]?.kpis?.length||0),0);
-  document.getElementById('preview-sub').textContent =
-    `${totalKPIs} KPIs detected across ${allViews.join(', ')} views. Click to deselect any you don't need.`;
-
-  const grid = document.getElementById('kpi-preview-grid');
-  grid.innerHTML = '';
-
-  allViews.forEach(viewName=>{
-    const sheet = data.views[viewName];
-    if(!sheet?.kpis?.length) return;
-
-    const header = document.createElement('div');
-    header.style.cssText='grid-column:1/-1;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 0 2px';
-    header.textContent = viewName + ' — ' + sheet.periods.length + ' periods';
-    grid.appendChild(header);
-
-    sheet.kpis.forEach(kpi=>{
-      const item = document.createElement('div');
-      item.className='kpi-preview-item selected';
-      item.dataset.view=viewName;
-      item.dataset.kpi=kpi.name;
-
-      const hasBudget = kpi.budget?.some(v=>v!=null);
-      const hasEZ = kpi.ezBP?.some(v=>v!=null);
-      const series = ['Actual', hasBudget?'Budget':null, hasEZ?'EZ BP':null].filter(Boolean).join(' · ');
-
-      item.innerHTML=`<div class="kpi-p-name">${kpi.name}</div><div class="kpi-p-meta">${series}</div>`;
-      item.addEventListener('click',()=>item.classList.toggle('selected'));
-      grid.appendChild(item);
-    });
-  });
-
-  document.getElementById('preview-overlay').style.display='flex';
-}
-
-function closePreview(){
-  document.getElementById('preview-overlay').style.display='none';
-  pendingCompany=null;
-}
-
-function confirmKPIs(){
-  if(!pendingCompany) return;
-
-  // Filter only selected KPIs
-  const selected = [...document.querySelectorAll('.kpi-preview-item.selected')];
-  const selectedMap = {};
-  selected.forEach(el=>{
-    if(!selectedMap[el.dataset.view]) selectedMap[el.dataset.view]=[];
-    selectedMap[el.dataset.view].push(el.dataset.kpi);
-  });
-
-  // Build filtered company
-  const company = {
-    name: pendingCompany.companyName,
-    logo: `https://logo.clearbit.com/${pendingCompany.companyName.toLowerCase().replace(/\s+/g,'')}.com`,
-    currency: pendingCompany.currency || '',
-    views: {}
+// ─── Parser ───────────────────────────────────────────────────────────────────
+function parseWorkbook(wb) {
+  const yName = wb.SheetNames.find(n => /dashboard\s*[-–]?\s*y$/i.test(n.trim()));
+  const qName = wb.SheetNames.find(n => /dashboard\s*[-–]?\s*q$/i.test(n.trim()));
+  return {
+    yearly:    yName ? parseSheet(wb.Sheets[yName], false) : null,
+    quarterly: qName ? parseSheet(wb.Sheets[qName], true)  : null,
   };
+}
 
-  Object.keys(pendingCompany.views||{}).forEach(viewName=>{
-    const sheet = pendingCompany.views[viewName];
-    const allowed = selectedMap[viewName]||[];
-    const filteredKPIs = (sheet.kpis||[]).filter(k=>allowed.includes(k.name));
-    if(filteredKPIs.length>0){
-      company.views[viewName]={periods:sheet.periods, kpis:filteredKPIs};
+function parseSheet(sheet, isQuarterly) {
+  const rows = XLSX.utils.sheet_to_json(sheet, { header:1, defval:null, raw:true });
+  if (!rows.length) return null;
+
+  const labelRow = rows[isQuarterly ? 1 : 0] || [];
+  const periods = [];
+  for (let i = 15; i < labelRow.length; i++) {
+    if (labelRow[i] != null && String(labelRow[i]).trim())
+      periods.push({ idx: i, label: String(labelRow[i]).trim() });
+  }
+  if (!periods.length) return null;
+
+  const metrics = [];
+  let cur = null;
+
+  for (let r = 0; r < rows.length; r++) {
+    const row = rows[r];
+    if (!row) continue;
+
+    // Section header: col[1] = positive integer, col[4] = long name
+    if (
+      row[1] !== null && row[1] !== undefined &&
+      typeof row[1] === 'number' && Number.isInteger(row[1]) && row[1] > 0 &&
+      row[4] != null && String(row[4]).trim()
+    ) {
+      cur = {
+        id: r,
+        name:      String(row[4]).trim(),
+        shortName: row[13] ? String(row[13]).trim() : String(row[4]).trim(),
+        actual: null, budget: null, ezBP: null,
+      };
+      metrics.push(cur);
     }
-  });
 
-  // Add or replace company
-  const idx = companies.findIndex(c=>c.name===company.name);
-  if(idx>=0){ companies[idx]=company; sel=idx; }
-  else { companies.push(company); sel=companies.length-1; }
+    if (cur && row[13] != null) {
+      const t = String(row[13]).trim();
+      if (!t) continue;
+      const vals = periods.map(p => {
+        const v = row[p.idx];
+        return (v != null && v !== '') ? Number(v) : null;
+      });
+      if (t === 'Actual')                      cur.actual = vals;
+      else if (t.toLowerCase().startsWith('budget')) cur.budget = vals;
+      else if (t === 'EZ BP')                  cur.ezBP   = vals;
+    }
+  }
 
-  view=null;
-  closePreview();
-  document.getElementById('empty-state').style.display='none';
-  document.getElementById('company-view').style.display='block';
+  return { periods: periods.map(p => p.label), metrics };
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function isPercent(metric) {
+  const all = [...(metric.actual||[]), ...(metric.budget||[])].filter(v => v != null);
+  return all.length > 0 && all.every(v => Math.abs(v) <= 2);
+}
+
+function fmtVal(v, pct) {
+  if (v == null) return '—';
+  if (pct) return (v * 100).toFixed(1) + '%';
+  if (Math.abs(v) >= 1000) return '$' + (v/1000).toFixed(1) + 'B';
+  return '$' + v.toFixed(0) + 'M';
+}
+
+// ─── File loading ─────────────────────────────────────────────────────────────
+function loadFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(new Uint8Array(e.target.result), { type:'array' });
+      const data = parseWorkbook(wb);
+      if (!data.yearly && !data.quarterly) {
+        alert('Could not find "Dashboard - Y" or "Dashboard - Q" tab in this file.');
+        return;
+      }
+      const name = file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
+      const existing = companies.findIndex(c => c.name === name);
+      if (existing >= 0) {
+        companies[existing].data = data;
+        selectCompany(existing);
+      } else {
+        companies.push({ name, data });
+        selectCompany(companies.length - 1);
+      }
+      renderNav();
+      renderView();
+    } catch(err) {
+      alert('Error reading file: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+function renderNav() {
+  const tabs = document.getElementById('company-tabs');
+  tabs.innerHTML = companies.map((c, i) => `
+    <button class="tab-btn ${i===selectedIdx?'active':''}" onclick="selectCompany(${i})">${c.name}</button>
+  `).join('');
+}
+
+function selectCompany(idx) {
+  selectedIdx = idx;
   renderNav();
   renderView();
 }
 
-// ─── Nav ─────────────────────────────────────────────────────────────────
-function renderNav(){
-  document.getElementById('company-tabs').innerHTML=companies.map((c,i)=>`
-    <button class="tab-btn ${i===sel?'active':''}" onclick="pick(${i})">${c.name}</button>`
-  ).join('');
-}
-
-function pick(i){ sel=i; view=null; renderNav(); renderView(); }
-
-// ─── View ─────────────────────────────────────────────────────────────────
-function renderView(){
-  const c=companies[sel];
-  if(!c) return;
-  const views=Object.keys(c.views);
-  if(!view||!c.views[view]) view=views[0];
-
-  document.getElementById('view-title').innerHTML=
-    c.name+(c.currency?`<span class="currency-tag">${c.currency}</span>`:'');
-
-  ['monthly','yearly','quarterly'].forEach(v=>{
-    const b=document.getElementById('btn-'+v);
-    const has=!!c.views[v];
-    b.style.display=has?'':'none';
-    b.classList.toggle('active',v===view);
-    b.disabled=!has;
-  });
+function switchView(v) {
+  currentView = v;
+  document.getElementById('btn-yearly').classList.toggle('active', v==='yearly');
+  document.getElementById('btn-quarterly').classList.toggle('active', v==='quarterly');
   renderMetrics();
 }
 
-function switchView(v){ view=v; renderView(); }
+// ─── View ─────────────────────────────────────────────────────────────────────
+function renderView() {
+  const hasCompanies = companies.length > 0;
+  document.getElementById('drop-zone').style.display    = hasCompanies ? 'none' : 'block';
+  document.getElementById('company-view').style.display = hasCompanies ? 'block' : 'none';
+  if (!hasCompanies) return;
 
-// ─── Metrics ──────────────────────────────────────────────────────────────
-function renderMetrics(){
-  const c=companies[sel];
-  const sheet=c?.views[view];
-  Object.values(charts).forEach(ch=>ch.destroy());
-  Object.keys(charts).forEach(k=>delete charts[k]);
-  const grid=document.getElementById('metrics-grid');
-  if(!sheet){grid.innerHTML='<p style="color:var(--muted);padding:60px;text-align:center">No data.</p>';return;}
-  document.getElementById('view-meta').textContent=
-    `${sheet.kpis.length} metrics · ${sheet.periods.length} periods · ${view}`;
-  grid.innerHTML=sheet.kpis.map(k=>buildCard(k,sheet.periods)).join('');
-  setTimeout(()=>sheet.kpis.forEach(k=>initChart(k,sheet.periods)),0);
+  const c = companies[selectedIdx];
+  document.getElementById('view-title').textContent = c.name;
+
+  const hasY = !!c.data.yearly;
+  const hasQ = !!c.data.quarterly;
+  document.getElementById('btn-yearly').disabled    = !hasY;
+  document.getElementById('btn-quarterly').disabled = !hasQ;
+
+  // Default to first available view
+  if (currentView === 'yearly' && !hasY && hasQ) currentView = 'quarterly';
+  if (currentView === 'quarterly' && !hasQ && hasY) currentView = 'yearly';
+  document.getElementById('btn-yearly').classList.toggle('active', currentView==='yearly');
+  document.getElementById('btn-quarterly').classList.toggle('active', currentView==='quarterly');
+
+  renderMetrics();
 }
 
-function isPercent(kpi){
-  const all=[...(kpi.actual||[]),...(kpi.budget||[])].filter(v=>v!=null);
-  return all.length>0&&all.every(v=>Math.abs(v)<=2);
-}
-function fmt(v,pct){
-  if(v==null)return'—';
-  if(pct)return(v*100).toFixed(1)+'%';
-  if(Math.abs(v)>=1e6)return(v/1e6).toFixed(1)+'M';
-  if(Math.abs(v)>=1000)return(v/1000).toFixed(1)+'K';
-  return v%1===0?v.toFixed(0):v.toFixed(1);
-}
+function renderMetrics() {
+  const c = companies[selectedIdx];
+  if (!c) return;
+  const sheet = c.data[currentView];
 
-function buildCard(kpi,periods){
-  const pct=isPercent(kpi);
-  const li=(kpi.actual||[]).reduce((a,v,i)=>v!=null?i:a,-1);
-  const la=li>=0?kpi.actual[li]:null;
-  const lb=kpi.budget?.[li]??null;
-  const dv=la!=null&&lb!=null?la-lb:null;
-  const dp=dv!=null&&lb!==0?(dv/Math.abs(lb))*100:null;
-  const pos=dv!=null?dv>=0:null;
-  let badge='';
-  if(dv!=null){
-    const av=pct?Math.abs(dv*100).toFixed(1)+'pp':
-      (Math.abs(dv)>=1000?(Math.abs(dv)/1000).toFixed(1)+'K':Math.abs(dv).toFixed(1));
-    const ps=dp!=null?` (${Math.abs(dp).toFixed(0)}%)`:'';
-    badge=`<span class="vbadge ${pos?'pos':'neg'}">${dv>0?'▲':'▼'} ${av}<span style="opacity:.65;font-weight:400">${ps}</span></span>`;
+  // Destroy old charts
+  Object.values(chartInstances).forEach(ch => ch.destroy());
+  Object.keys(chartInstances).forEach(k => delete chartInstances[k]);
+
+  const grid = document.getElementById('metrics-grid');
+  if (!sheet || !sheet.metrics.length) {
+    grid.innerHTML = `<div style="color:var(--muted);text-align:center;padding:60px;grid-column:1/-1">No ${currentView} data found.</div>`;
+    document.getElementById('view-sub').textContent = '';
+    return;
   }
-  let krow='';
-  if(la!=null){
-    krow=`<div class="kpi-row">
-      <div><div class="kpi-val">${fmt(la,pct)}</div><div class="kpi-sub">${periods[li]} · Actual</div></div>
-      ${lb!=null?`<div><div class="kpi-bud">${fmt(lb,pct)}</div><div class="kpi-sub">Budget</div></div>`:''}
+
+  document.getElementById('view-sub').textContent = `${sheet.metrics.length} metrics · ${sheet.periods.length} periods`;
+
+  grid.innerHTML = sheet.metrics.map(m => buildCardHTML(m, sheet.periods)).join('');
+
+  // Init charts after DOM render
+  setTimeout(() => {
+    sheet.metrics.forEach(m => initChart(m, sheet.periods));
+  }, 0);
+}
+
+function buildCardHTML(metric, periods) {
+  const pct = isPercent(metric);
+  const lastActIdx = (metric.actual||[]).reduce((a,v,i) => v!=null?i:a, -1);
+  const lastAct    = lastActIdx >= 0 ? metric.actual[lastActIdx] : null;
+  const lastBud    = metric.budget?.[lastActIdx] ?? null;
+  const variance   = (lastAct != null && lastBud != null) ? lastAct - lastBud : null;
+  const varPct     = (variance != null && lastBud !== 0) ? (variance/Math.abs(lastBud))*100 : null;
+  const positive   = variance != null ? variance >= 0 : null;
+
+  let badgeHTML = '';
+  if (variance != null) {
+    const arrow = variance > 0 ? '▲' : '▼';
+    const cls   = positive ? 'pos' : 'neg';
+    const absV  = pct
+      ? Math.abs(variance*100).toFixed(1) + 'pp'
+      : (Math.abs(variance)>=1000 ? (Math.abs(variance)/1000).toFixed(1)+'B' : Math.abs(variance).toFixed(0)+'M');
+    const pctStr = varPct != null ? ` (${Math.abs(varPct).toFixed(0)}%)` : '';
+    badgeHTML = `<span class="variance-badge ${cls}">${arrow} ${absV}<span style="opacity:.7;font-weight:400">${pctStr}</span></span>`;
+  }
+
+  let kpiHTML = '';
+  if (lastAct != null) {
+    kpiHTML = `<div class="kpi-row">
+      <div>
+        <div class="kpi-actual">${fmtVal(lastAct, pct)}</div>
+        <div class="kpi-sub">${periods[lastActIdx]} · Actual</div>
+      </div>
+      ${lastBud != null ? `<div><div class="kpi-budget">${fmtVal(lastBud,pct)}</div><div class="kpi-sub">Budget</div></div>` : ''}
     </div>`;
   }
-  const cid='c_'+kpi.name.replace(/\W/g,'_');
+
   return `<div class="metric-card">
     <div class="card-head">
-      <div><div class="card-label">${view}</div><div class="card-name">${kpi.name}</div></div>
-      ${badge}
-    </div>${krow}
-    <div class="chart-wrap"><canvas id="${cid}"></canvas></div>
+      <div>
+        <div class="card-label">${metric.shortName}</div>
+        <div class="card-name">${metric.name}</div>
+      </div>
+      ${badgeHTML}
+    </div>
+    ${kpiHTML}
+    <div class="chart-wrap"><canvas id="chart-${metric.id}"></canvas></div>
     <div class="chart-legend">
-      ${kpi.actual?'<span style="color:var(--green)">─── Actual</span>':''}
-      ${kpi.budget?'<span style="color:var(--amber)">- - Budget</span>':''}
-      ${kpi.ezBP?'<span style="color:var(--purple)">··· EZ BP</span>':''}
+      ${metric.actual ? '<span class="leg-actual">─── Actual</span>' : ''}
+      ${metric.budget ? '<span class="leg-budget">- - Budget</span>' : ''}
+      ${metric.ezBP   ? '<span class="leg-ez">··· EZ BP</span>'      : ''}
     </div>
   </div>`;
 }
 
-function initChart(kpi,periods){
-  const cid='c_'+kpi.name.replace(/\W/g,'_');
-  const canvas=document.getElementById(cid);
-  if(!canvas)return;
-  const pct=isPercent(kpi);
-  const sc=pct?100:1;
-  const ds=[];
-  if(kpi.actual) ds.push({label:'Actual',data:kpi.actual.map(v=>v!=null?+(v*sc).toFixed(3):null),borderColor:'#3dffa8',borderWidth:2,pointRadius:0,spanGaps:true,tension:0.3});
-  if(kpi.budget) ds.push({label:'Budget',data:kpi.budget.map(v=>v!=null?+(v*sc).toFixed(3):null),borderColor:'#f5a623',borderWidth:1.5,borderDash:[5,3],pointRadius:0,spanGaps:true,tension:0.3});
-  if(kpi.ezBP)   ds.push({label:'EZ BP', data:kpi.ezBP.map(v=>v!=null?+(v*sc).toFixed(3):null),  borderColor:'#8f9cf5',borderWidth:1.5,borderDash:[2,4],pointRadius:0,spanGaps:true,tension:0.3});
-  const sfx=pct?'%':'';
-  charts[cid]=new Chart(canvas,{
-    type:'line',data:{labels:periods,datasets:ds},
-    options:{
-      responsive:true,maintainAspectRatio:false,animation:false,
-      interaction:{mode:'index',intersect:false},
-      plugins:{
-        legend:{display:false},
-        tooltip:{backgroundColor:'#0f1e33',borderColor:'#16283f',borderWidth:1,titleColor:'#3dffa8',bodyColor:'#c8ddf0',
-          callbacks:{label:ctx=>' '+ctx.dataset.label+': '+ctx.parsed.y+sfx}}
+function initChart(metric, periods) {
+  const canvas = document.getElementById('chart-' + metric.id);
+  if (!canvas) return;
+
+  const pct    = isPercent(metric);
+  const scale  = pct ? 100 : 1;
+  const labels = periods;
+
+  const datasets = [];
+  if (metric.actual) datasets.push({
+    label: 'Actual', data: metric.actual.map(v => v!=null ? +(v*scale).toFixed(2) : null),
+    borderColor: '#3dffa8', borderWidth: 2,
+    pointRadius: 0, spanGaps: true, tension: 0.3,
+  });
+  if (metric.budget) datasets.push({
+    label: 'Budget', data: metric.budget.map(v => v!=null ? +(v*scale).toFixed(2) : null),
+    borderColor: '#f5a623', borderWidth: 1.5, borderDash: [5,3],
+    pointRadius: 0, spanGaps: true, tension: 0.3,
+  });
+  if (metric.ezBP) datasets.push({
+    label: 'EZ BP', data: metric.ezBP.map(v => v!=null ? +(v*scale).toFixed(2) : null),
+    borderColor: '#8f9cf5', borderWidth: 1.5, borderDash: [2,4],
+    pointRadius: 0, spanGaps: true, tension: 0.3,
+  });
+
+  const suffix = pct ? '%' : 'M';
+  chartInstances[metric.id] = new Chart(canvas, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f1e33',
+          borderColor: '#16283f', borderWidth: 1,
+          titleColor: '#3dffa8', bodyColor: '#c8ddf0',
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}${suffix}`,
+          }
+        },
       },
-      scales:{
-        x:{grid:{color:'#0f2036'},ticks:{color:'#3d5a78',font:{size:9},maxTicksLimit:8},border:{display:false}},
-        y:{grid:{color:'#0f2036'},ticks:{color:'#3d5a78',font:{size:9},
-          callback:v=>Math.abs(v)>=1000?(v/1000).toFixed(0)+'K':v+sfx},border:{display:false}}
-      }
-    }
+      scales: {
+        x: {
+          grid: { color: '#0f2036' },
+          ticks: { color: '#3d5a78', font: { size: 9 }, maxTicksLimit: 8 },
+          border: { display: false },
+        },
+        y: {
+          grid: { color: '#0f2036' },
+          ticks: {
+            color: '#3d5a78', font: { size: 9 },
+            callback: v => Math.abs(v)>=1000 ? (v/1000).toFixed(1)+'B' : v+suffix,
+          },
+          border: { display: false },
+        },
+      },
+    },
   });
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────
-function showLoading(txt){
-  document.getElementById('loading-text').textContent=txt||'Loading…';
-  document.getElementById('loading-overlay').style.display='flex';
-}
-function updateLoading(txt){ document.getElementById('loading-text').textContent=txt; }
-function hideLoading(){ document.getElementById('loading-overlay').style.display='none'; }
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.style.display='block';
-  setTimeout(()=>t.style.display='none',4000);
-}
+// ─── Event wiring ─────────────────────────────────────────────────────────────
+document.getElementById('main-upload').addEventListener('change', e => loadFile(e.target.files[0]));
+document.getElementById('nav-upload').addEventListener('change',  e => { loadFile(e.target.files[0]); e.target.value=''; });
 
-
-// ─── Chat ───────────────────────────────────────────────────────────────
-let chatOpen = false;
-let chatHistory = [];
-
-function toggleChat(){
-  chatOpen = !chatOpen;
-  document.getElementById('chat-panel').classList.toggle('open', chatOpen);
-  document.body.classList.toggle('chat-open', chatOpen);
-  document.getElementById('chat-toggle').classList.toggle('hidden', chatOpen);
-  if(chatOpen) document.getElementById('chat-input').focus();
-}
-
-function sendSuggestion(btn){
-  document.getElementById('chat-input').value = btn.textContent;
-  document.getElementById('chat-suggestions').style.display='none';
-  sendChat();
-}
-
-async function sendChat(){
-  const input = document.getElementById('chat-input');
-  const msg = input.value.trim();
-  if(!msg) return;
-  input.value = '';
-  autoResize(input);
-
-  appendMsg('user', msg);
-  chatHistory.push({role:'user', content: msg});
-
-  document.getElementById('chat-send').disabled = true;
-  const thinking = appendMsg('ai', '…', true);
-
-  // Build context about current dashboard state
-  const context = buildDashboardContext();
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1500,
-        system: `You are a financial analyst assistant for Eurazeo Growth, a private equity fund. You have access to the portfolio monitoring dashboard data below.
-
-DASHBOARD STATE:
-${context}
-
-You can help with:
-1. Answering questions about the data (trends, comparisons, summaries)
-2. Filtering the dashboard — if the user asks to show/hide specific KPIs, respond with a JSON action block like:
-   <action>{"type":"filter_kpis","company":"Neo4J","view":"yearly","keep":["ARR","Revenue","EBITDA"]}</action>
-3. Switching views — respond with:
-   <action>{"type":"switch_view","view":"quarterly"}</action>
-4. Switching company:
-   <action>{"type":"switch_company","company":"Dexory"}</action>
-
-Keep answers concise and insightful. For numbers, be specific. If doing an action, briefly explain what you're doing.`,
-        messages: chatHistory
-      })
-    });
-
-    const data = await resp.json();
-    const text = data.content[0].text;
-
-    // Parse and execute any actions
-    const actionMatch = text.match(/<action>([\s\S]*?)<\/action>/);
-    let displayText = text.replace(/<action>[\s\S]*?<\/action>/g, '').trim();
-
-    thinking.remove();
-    appendMsg('ai', displayText);
-    chatHistory.push({role:'assistant', content: text});
-
-    if(actionMatch){
-      try {
-        const action = JSON.parse(actionMatch[1]);
-        executeAction(action);
-      } catch(e){}
-    }
-
-  } catch(err){
-    thinking.remove();
-    appendMsg('ai', 'Sorry, something went wrong: ' + err.message);
-  }
-
-  document.getElementById('chat-send').disabled = false;
-}
-
-function buildDashboardContext(){
-  if(companies.length === 0) return 'No companies loaded yet.';
-
-  let ctx = `Currently viewing: ${companies[sel]?.name || 'none'} | View: ${view || 'none'}\n\n`;
-  companies.forEach(c => {
-    ctx += `Company: ${c.name} (${c.currency})\n`;
-    Object.keys(c.views).forEach(v => {
-      const sheet = c.views[v];
-      ctx += `  ${v} view — ${sheet.periods.length} periods (${sheet.periods[0]} to ${sheet.periods[sheet.periods.length-1]})\n`;
-      sheet.kpis.forEach(k => {
-        const lastActual = (k.actual||[]).filter(v=>v!=null).pop();
-        const lastPeriod = sheet.periods[(k.actual||[]).reduce((a,v,i)=>v!=null?i:a,-1)];
-        ctx += `    KPI: ${k.name} | Latest actual: ${lastActual ?? 'n/a'} (${lastPeriod||''}) | has budget: ${k.budget?.some(v=>v!=null)} | has EZ BP: ${k.ezBP?.some(v=>v!=null)}\n`;
-      });
-    });
-  });
-  return ctx;
-}
-
-function executeAction(action){
-  if(action.type === 'switch_view' && action.view){
-    if(companies[sel]?.views[action.view]){
-      view = action.view;
-      renderView();
-    }
-  }
-  else if(action.type === 'switch_company' && action.company){
-    const idx = companies.findIndex(c=>c.name.toLowerCase()===action.company.toLowerCase());
-    if(idx>=0){ sel=idx; view=null; renderNav(); renderView(); }
-  }
-  else if(action.type === 'filter_kpis' && action.keep){
-    const targetSel = action.company
-      ? companies.findIndex(c=>c.name.toLowerCase()===action.company.toLowerCase())
-      : sel;
-    if(targetSel>=0 && action.view && companies[targetSel]?.views[action.view]){
-      companies[targetSel].views[action.view].kpis =
-        companies[targetSel].views[action.view].kpis.filter(k=>action.keep.includes(k.name));
-      if(targetSel===sel) renderMetrics();
-    }
-  }
-}
-
-function appendMsg(role, text, isTemp=false){
-  const msgs = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-  const time = new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
-  div.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div><div class="msg-time">${role==='user'?'You':'Claude AI'} · ${time}</div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  return div;
-}
-
-function autoResize(el){
-  el.style.height='auto';
-  el.style.height=Math.min(el.scrollHeight,100)+'px';
-}
-document.getElementById('chat-input').addEventListener('input', function(){ autoResize(this); });
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('over');
+  loadFile(e.dataTransfer.files[0]);
+});
 </script>
 </body>
 </html>
