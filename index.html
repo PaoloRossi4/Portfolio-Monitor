@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- saved from url=(0047)file:///C:/Users/prossi/Downloads/index_21.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio Monitor · Eurazeo Growth</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="./index_files/xlsx.full.min.js.download"></script>
+<script src="./index_files/chart.umd.min.js.download"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -20,7 +20,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min
 
 /* ── NAV ── */
 nav{
-  position:sticky;top:0;z-index:100;
+  position:sticky;top:0;z-index:200;
   background:linear-gradient(90deg, #001a35 0%, #002a52 100%);
   border-bottom:2px solid var(--ez-teal);
   padding:10px 24px;
@@ -59,6 +59,20 @@ nav{
 
 /* ── MAIN ── */
 main{padding:28px}
+
+/* ── PASSWORD SCREEN ── */
+#pwd-screen{max-width:420px;margin:100px auto;text-align:center}
+#pwd-screen h2{font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px}
+#pwd-screen p{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.6}
+.pwd-input-wrap{position:relative;margin-bottom:12px}
+.pwd-input-wrap input{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:12px 48px 12px 16px;
+  font-size:14px;color:var(--text);font-family:inherit;
+  outline:none;transition:border-color .2s;letter-spacing:.1em;
+}
+.pwd-input-wrap input:focus{border-color:rgba(0,180,160,.5)}
+.pwd-error{color:var(--red);font-size:12px;margin-top:8px;display:none}
 
 /* ── API KEY SCREEN ── */
 #key-screen{
@@ -113,6 +127,47 @@ main{padding:28px}
 .kpi-bud{font-size:14px;color:var(--amber)}
 .chart-wrap{height:150px;position:relative}
 .chart-legend{display:flex;gap:14px;font-size:9px;margin-top:10px;flex-wrap:wrap;color:var(--muted)}
+.chart-fullscreen{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:40px;cursor:pointer}
+.chart-fullscreen-inner{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:900px;max-height:90vh;cursor:default}
+.chart-fullscreen-inner canvas{max-height:60vh!important}
+
+/* Date range filter */
+.date-range-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.date-range-bar label{font-size:11px;color:var(--muted)}
+.period-select{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:11px;color:var(--text);font-family:inherit;outline:none;cursor:pointer}
+.period-select:focus{border-color:rgba(0,180,160,.4)}
+.view-toggle-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* Table view */
+.table-view-btn{background:transparent;border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-size:11px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.table-view-btn.active{color:var(--ez-teal);border-color:rgba(0,180,160,.4);background:rgba(0,180,160,.08)}
+.kpi-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.kpi-table th{text-align:left;padding:8px 12px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);font-weight:600}
+.kpi-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text)}
+.kpi-table tr:hover td{background:rgba(255,255,255,.02)}
+.kpi-table .actual{color:var(--ez-teal);font-weight:600}
+.kpi-table .budget{color:var(--amber)}
+.kpi-table .variance.pos{color:var(--ez-teal)}
+.kpi-table .variance.neg{color:var(--red)}
+.metric-card{cursor:pointer;transition:border-color .2s}
+.metric-card:hover{border-color:rgba(0,180,160,.3)}
+
+/* Export modal */
+#export-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center}
+#export-modal.open{display:flex}
+.export-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:500px;max-width:95vw;max-height:85vh;overflow-y:auto}
+.export-box h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px}
+.export-section{margin-bottom:18px}
+.export-section label{font-size:11px;color:var(--muted);display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+.export-checks{display:flex;flex-direction:column;gap:6px}
+.export-check{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text);cursor:pointer}
+.export-check input{accent-color:var(--ez-teal)}
+.export-range{display:flex;gap:10px;align-items:center}
+.export-range select{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-size:12px;color:var(--text);font-family:inherit;outline:none}
+.export-btns{display:flex;gap:10px;margin-top:20px}
+.export-btn-pdf{flex:1;background:rgba(255,107,122,.1);border:1px solid rgba(255,107,122,.3);border-radius:8px;padding:10px;font-size:12px;color:var(--red);cursor:pointer;font-family:inherit;font-weight:600}
+.export-btn-excel{flex:1;background:rgba(0,180,160,.1);border:1px solid rgba(0,180,160,.3);border-radius:8px;padding:10px;font-size:12px;color:var(--ez-teal);cursor:pointer;font-family:inherit;font-weight:600}
+.export-btn-cancel{background:transparent;border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:inherit}
 
 /* ── EMPTY / UPLOAD ── */
 #empty-state{padding-top:64px;display:none}
@@ -125,6 +180,22 @@ main{padding:28px}
 .drop-zone h2{font-size:16px;color:var(--text);margin-bottom:8px}
 .drop-zone p{font-size:12px;color:var(--muted);margin-bottom:20px}
 .browse-btn{display:inline-block;background:rgba(61,255,168,.1);border:1px solid rgba(61,255,168,.3);border-radius:8px;padding:8px 22px;font-size:12px;color:var(--green);cursor:pointer}
+
+/* ── KPI SELECTOR MODAL ── */
+#kpi-selector-modal{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center}
+#kpi-selector-modal.open{display:flex}
+.kpi-sel-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;width:560px;max-width:95vw;max-height:85vh;display:flex;flex-direction:column}
+.kpi-sel-box h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px}
+.kpi-sel-box p{font-size:11px;color:var(--muted);margin-bottom:16px}
+.kpi-sel-tabs{display:flex;gap:2px;background:var(--bg);border-radius:8px;padding:3px;margin-bottom:14px;flex-shrink:0}
+.kpi-sel-tab{flex:1;background:transparent;border:none;padding:6px;font-size:11px;color:var(--muted);cursor:pointer;border-radius:6px;font-family:inherit;transition:all .15s}
+.kpi-sel-tab.active{background:var(--surface);color:var(--text);font-weight:600}
+.kpi-sel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;overflow-y:auto;flex:1;padding-right:4px}
+.kpi-sel-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;font-size:12px;color:var(--muted)}
+.kpi-sel-item:hover{border-color:rgba(0,180,160,.3);color:var(--text)}
+.kpi-sel-item.on{border-color:rgba(0,180,160,.5);background:rgba(0,180,160,.08);color:var(--text)}
+.kpi-sel-item input{accent-color:var(--ez-teal);cursor:pointer}
+.kpi-sel-actions{display:flex;gap:8px;margin-top:14px;flex-shrink:0}
 
 /* ── PREVIEW MODAL ── */
 #preview-overlay{
@@ -167,27 +238,54 @@ main{padding:28px}
   display:none;max-width:320px;
 }
 
-/* ── CHAT PANEL ── */
-#chat-panel{
-  position:fixed;right:0;top:0;bottom:0;width:360px;
-  background:var(--surface);border-left:2px solid rgba(0,180,160,.3);
+/* ── RIGHT PANEL (Chat + Notes unified) ── */
+#right-panel{
+  position:fixed;right:0;top:52px;bottom:0;width:380px;
+  background:var(--surface);border-left:2px solid rgba(0,180,160,.2);
   display:flex;flex-direction:column;z-index:50;
   transform:translateX(100%);transition:transform .25s ease;
 }
-#chat-panel.open{ transform:translateX(0); }
-body.chat-open main{ margin-right:360px; }
-body.chat-open nav{ padding-right:calc(360px + 24px); }
-
-.chat-header{
-  padding:14px 16px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+#right-panel.open{ transform:translateX(0); }
+/* panels overlay content, main never shifts */
+/* nav never shifts — panels slide over content only */
+/* ── LEFT PANEL (SharePoint browser) ── */
+#sp-panel{
+  position:fixed;left:0;top:52px;bottom:0;width:280px;
+  background:var(--surface);border-right:2px solid rgba(0,180,160,.2);
+  display:flex;flex-direction:column;z-index:50;
+  transform:translateX(-100%);transition:transform .25s ease;
 }
-.chat-header-left{display:flex;align-items:center;gap:8px}
-.chat-dot{width:8px;height:8px;border-radius:50%;background:var(--ez-teal);animation:pulse 2s infinite}
+#sp-panel.open{ transform:translateX(0); }
+/* sp panel overlays content */
+/* sp-open nav stays full width */
+.sp-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sp-title{font-size:13px;font-weight:600;color:var(--text)}
+.sp-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px}
+.sp-tree{flex:1;overflow-y:auto;padding:12px}
+.sp-folder{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s}
+.sp-folder:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.sp-folder.selected{background:rgba(0,180,160,.1);color:var(--ez-teal)}
+.sp-folder-icon{font-size:13px;flex-shrink:0}
+.sp-indent{padding-left:20px}
+.sp-file{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:11px;color:var(--muted);transition:all .15s}
+.sp-file:hover{background:rgba(0,180,160,.08);color:var(--ez-teal)}
+.sp-connect-box{margin:12px;padding:16px;border:1px dashed rgba(0,180,160,.3);border-radius:10px;text-align:center}
+.sp-connect-box p{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.sp-connect-btn{width:100%;background:rgba(0,180,160,.1);border:1px solid rgba(0,180,160,.3);border-radius:7px;padding:8px;font-size:11px;color:var(--ez-teal);cursor:pointer;font-family:inherit;font-weight:600}
+
+.rp-header{
+  padding:10px 14px 0;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:6px;
+}
+.rp-tabs{display:flex;gap:2px;background:var(--bg);border-radius:8px;padding:3px;flex:1}
+.rp-tab{flex:1;background:transparent;border:none;padding:5px 8px;font-size:11px;
+  color:var(--muted);cursor:pointer;border-radius:6px;font-family:inherit;transition:all .15s;white-space:nowrap}
+.rp-tab.active{background:var(--surface);color:var(--text);font-weight:600}
+.rp-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;flex-shrink:0}
+.chat-dot{width:7px;height:7px;border-radius:50%;background:var(--ez-teal);animation:pulse 2s infinite;display:inline-block;margin-right:4px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.chat-title{font-size:13px;font-weight:600;color:var(--text)}
-.chat-sub{font-size:10px;color:var(--muted)}
-.chat-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1}
+.rp-pane{display:none;flex:1;flex-direction:column;overflow:hidden}
+.rp-pane.active{display:flex}
 
 #chat-messages{
   flex:1;overflow-y:auto;padding:16px;
@@ -244,16 +342,7 @@ body.chat-open nav{ padding-right:calc(360px + 24px); }
 }
 #chat-toggle:hover{transform:scale(1.08)}
 #chat-toggle.hidden{display:none}
-/* ── NOTES PANEL ── */
-#notes-panel{
-  position:fixed;left:0;top:0;bottom:0;width:400px;
-  background:var(--surface);border-right:2px solid rgba(0,180,160,.3);
-  display:flex;flex-direction:column;z-index:50;
-  transform:translateX(-100%);transition:transform .25s ease;
-}
-#notes-panel.open{ transform:translateX(0); }
-body.notes-open main{ margin-left:400px; }
-body.notes-open nav{ padding-left:calc(400px + 24px); }
+/* notes panel merged into right panel */
 
 .notes-header{
   padding:14px 16px;border-bottom:1px solid var(--border);
@@ -338,28 +427,40 @@ body.notes-open nav{ padding-left:calc(400px + 24px); }
 
 <nav>
   <div class="logo">
-    <img src="data:image/png;base64,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" alt="Eurazeo" class="logo-img" style="filter:none" onerror="this.style.opacity=0"/>
+    <img src="data:image/png;base64,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" alt="Eurazeo" class="logo-img" style="filter:none" onerror="this.style.opacity=0">
     <div class="logo-divider"></div>
     <div><div class="logo-title">Eurazeo Growth</div><div class="logo-sub">Portfolio Monitoring</div></div>
   </div>
   <div id="company-tabs"></div>
   <label class="add-btn" id="add-btn-label" style="display:none">
     + Add Company
-    <input type="file" accept=".xlsx,.xls" style="display:none" id="nav-upload"/>
+    <input type="file" accept=".xlsx,.xls" style="display:none" id="nav-upload">
   </label>
   <button class="key-btn" id="key-settings-btn" style="display:none" onclick="showKeyScreen()">🔑 API Key</button>
-  <button class="key-btn" id="notes-nav-btn" style="display:none" onclick="toggleNotes()">📝 Notes</button>
-  <button class="key-btn" id="chat-nav-btn" style="display:none" onclick="toggleChat()">💬 Chat</button>
+  <button class="key-btn" id="sp-nav-btn" style="display:none" onclick="toggleSP()">📁 EZG Portfolio</button>
+  <button class="key-btn" id="right-nav-btn" style="display:none" onclick="toggleRight()">💬 Chat</button>
 </nav>
 
 <main>
+  <!-- Password Screen -->
+  <div id="pwd-screen" style="display: block;">
+    <div style="font-size:52px;margin-bottom:20px">🔒</div>
+    <h2>Eurazeo Growth</h2>
+    <p>Portfolio Monitoring<br><span style="font-size:11px;opacity:.5">Enter access password to continue</span></p>
+    <div class="pwd-input-wrap">
+      <input type="password" id="pwd-input" placeholder="Password" onkeydown="if(event.key===&#39;Enter&#39;) checkPassword()">
+    </div>
+    <div class="pwd-error" id="pwd-error">Incorrect password. Try again.</div>
+    <button class="primary-btn" onclick="checkPassword()" style="margin-top:12px">Enter →</button>
+  </div>
+
   <!-- API Key Screen -->
-  <div id="key-screen">
+  <div id="key-screen" style="display: none;">
     <div style="font-size:48px;margin-bottom:20px">🔑</div>
     <h2>Enter your Anthropic API Key</h2>
     <p>Your key is stored only in this browser session.<br>It's never sent anywhere except directly to Anthropic.</p>
     <div class="key-input-wrap">
-      <input type="password" id="key-input" placeholder="sk-ant-api03-..." />
+      <input type="password" id="key-input" placeholder="sk-ant-api03-...">
       <button class="eye-btn" onclick="toggleKeyVisibility()">👁</button>
     </div>
     <button class="primary-btn" onclick="saveKey()">Continue →</button>
@@ -367,7 +468,7 @@ body.notes-open nav{ padding-left:calc(400px + 24px); }
   </div>
 
   <!-- Empty state (after key set, before companies) -->
-  <div id="empty-state">
+  <div id="empty-state" style="display: none;">
     <div style="text-align:center;margin-bottom:40px">
       <div style="font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px">Portfolio Performance Dashboard</div>
       <div style="font-size:13px;color:var(--muted)">Upload an Excel file per company — Claude AI will detect all KPIs automatically</div>
@@ -376,7 +477,7 @@ body.notes-open nav{ padding-left:calc(400px + 24px); }
       <div style="font-size:40px;margin-bottom:16px">📊</div>
       <h2>Drop your portfolio Excel here</h2>
       <p>Claude AI will read any Excel structure and detect all KPIs</p>
-      <label class="browse-btn">Browse files<input type="file" accept=".xlsx,.xls" style="display:none" id="main-upload"/></label>
+      <label class="browse-btn">Browse files<input type="file" accept=".xlsx,.xls" style="display:none" id="main-upload"></label>
     </div>
   </div>
 
@@ -388,14 +489,86 @@ body.notes-open nav{ padding-left:calc(400px + 24px); }
         <div class="company-meta" id="view-meta"></div>
       </div>
       <div class="toggle-group">
-        <button class="toggle-btn" id="btn-monthly"   onclick="switchView('monthly')">Monthly</button>
-        <button class="toggle-btn" id="btn-yearly"    onclick="switchView('yearly')">Yearly</button>
-        <button class="toggle-btn" id="btn-quarterly" onclick="switchView('quarterly')">Quarterly</button>
+        <button class="toggle-btn" id="btn-monthly" onclick="switchView(&#39;monthly&#39;)">Monthly</button>
+        <button class="toggle-btn" id="btn-yearly" onclick="switchView(&#39;yearly&#39;)">Yearly</button>
+        <button class="toggle-btn" id="btn-quarterly" onclick="switchView(&#39;quarterly&#39;)">Quarterly</button>
+      </div>
+    </div>
+    <!-- Date range + view controls -->
+    <div class="date-range-bar" id="date-range-bar">
+      <label>From</label>
+      <select class="period-select" id="period-from" onchange="applyPeriodFilter()"></select>
+      <label>To</label>
+      <select class="period-select" id="period-to" onchange="applyPeriodFilter()"></select>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="table-view-btn" id="btn-table-view" onclick="toggleTableView()">⊞ Table</button>
+        <button class="table-view-btn" id="btn-chart-view" onclick="toggleTableView()" style="display:none">▦ Charts</button>
+        <button class="table-view-btn" onclick="openKpiSelectorEdit()">⚙ KPIs</button>
+        <button class="table-view-btn" onclick="openExportModal()">⬇ Export</button>
       </div>
     </div>
     <div id="metrics-grid"></div>
   </div>
 </main>
+
+<!-- KPI Selector Modal -->
+<div id="kpi-selector-modal">
+  <div class="kpi-sel-box">
+    <h3>📊 Select KPIs to display</h3>
+    <p id="kpi-sel-company-name">Choose which metrics to show in the dashboard</p>
+    <div class="kpi-sel-tabs" id="kpi-sel-tabs"></div>
+    <div class="kpi-sel-grid" id="kpi-sel-grid"></div>
+    <div class="kpi-sel-actions">
+      <button class="export-btn-cancel" onclick="kpiSelAll(true)">☑ Select All</button>
+      <button class="export-btn-cancel" onclick="kpiSelAll(false)">☐ Deselect All</button>
+      <div style="flex:1"></div>
+      <button class="export-btn-excel" onclick="applyKpiSelection()">Apply →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div id="export-modal">
+  <div class="export-box">
+    <h3>⬇ Export Dashboard</h3>
+    <div class="export-section">
+      <label>Companies to include</label>
+      <div class="export-checks" id="export-company-checks"></div>
+    </div>
+    <div class="export-section">
+      <label>Period range</label>
+      <div class="export-range">
+        <select id="export-from"></select>
+        <span style="color:var(--muted);font-size:11px">to</span>
+        <select id="export-to"></select>
+      </div>
+    </div>
+    <div class="export-section">
+      <label>Series to include</label>
+      <div class="export-checks">
+        <label class="export-check"><input type="checkbox" id="exp-actual" checked=""> Actual</label>
+        <label class="export-check"><input type="checkbox" id="exp-budget" checked=""> Budget</label>
+        <label class="export-check"><input type="checkbox" id="exp-ezbp"> EZ BP</label>
+      </div>
+    </div>
+    <div class="export-btns">
+      <button class="export-btn-pdf" onclick="exportPDF()">📄 Export PDF</button>
+      <button class="export-btn-excel" onclick="exportExcel()">📊 Export Excel</button>
+      <button class="export-btn-cancel" onclick="closeExportModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Fullscreen Chart Modal -->
+<div id="fullscreen-modal" style="display:none" class="chart-fullscreen" onclick="closeFullscreen()">
+  <div class="chart-fullscreen-inner" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div id="fs-title" style="font-size:16px;font-weight:700;color:var(--text)"></div>
+      <button onclick="closeFullscreen()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px">✕</button>
+    </div>
+    <canvas id="fs-canvas" style="max-height:60vh"></canvas>
+  </div>
+</div>
 
 <!-- Preview Modal -->
 <div id="preview-overlay">
@@ -416,91 +589,329 @@ body.notes-open nav{ padding-left:calc(400px + 24px); }
   <div class="loading-text" id="loading-text">Claude AI is reading your Excel…</div>
 </div>
 
-<!-- Notes Panel -->
-<div id="notes-panel">
-  <div class="notes-header">
-    <div class="notes-tabs">
-      <button class="notes-tab active" id="tab-notes" onclick="switchNotesTab('notes')">📝 Notes</button>
-      <button class="notes-tab" id="tab-report" onclick="switchNotesTab('report')">📄 Report</button>
+<!-- RIGHT PANEL: Chat + Notes unified -->
+<div id="right-panel">
+  <div class="rp-header">
+    <div class="rp-tabs">
+      <button class="rp-tab active" id="rp-tab-chat" onclick="switchRPTab(&#39;chat&#39;)"><span class="chat-dot"></span>KPIs</button>
+      <button class="rp-tab" id="rp-tab-notes" onclick="switchRPTab(&#39;notes&#39;)">📝 Notes</button>
+      <button class="rp-tab" id="rp-tab-report" onclick="switchRPTab(&#39;report&#39;)">📄 Report</button>
     </div>
-    <button class="notes-close" onclick="toggleNotes()">✕</button>
   </div>
 
-  <div id="notes-content">
-    <!-- NOTES PANE -->
-    <div id="notes-tab-pane">
-      <textarea id="notes-textarea" placeholder="Take notes here…&#10;&#10;Use this space to jot down observations, investment thesis points, or anything relevant to your portfolio review."></textarea>
+  <!-- CHAT PANE -->
+  <div class="rp-pane active" id="rp-pane-chat">
+    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px">
+      <div class="msg ai">
+        <div class="msg-bubble">Hi! I can see your portfolio data. Ask me anything — comparisons, trends, KPIs, or ask me to filter the dashboard.</div>
+        <div class="msg-time">Claude AI</div>
+      </div>
+    </div>
+    <div class="chat-suggestions" id="chat-suggestions">
+      <div style="font-size:9px;color:var(--muted);margin-bottom:2px">SUGGESTIONS</div>
+      <button class="suggestion-chip" onclick="sendSuggestion(this)">Show only Actual and Budget</button>
+      <button class="suggestion-chip" onclick="sendSuggestion(this)">Add OCF and Cash Balance</button>
+      <button class="suggestion-chip" onclick="sendSuggestion(this)">Show only ARR, Revenue, EBITDA</button>
+      <button class="suggestion-chip" onclick="sendSuggestion(this)">Restore all KPIs and series</button>
+    </div>
+    <div class="chat-input-wrap">
+      <textarea id="chat-input" placeholder="Ask about your portfolio…" rows="1" onkeydown="if(event.key===&#39;Enter&#39;&amp;&amp;!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+      <button id="chat-send" onclick="sendChat()">↑</button>
+    </div>
+  </div>
+
+  <!-- NOTES PANE -->
+  <div class="rp-pane" id="rp-pane-notes">
+    <div id="notes-tab-pane" style="flex:1;display:flex;flex-direction:column;padding:14px;gap:10px;overflow:hidden">
+      <textarea id="notes-textarea" placeholder="Take notes here…
+
+Jot down observations, investment thesis points, or anything relevant." style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:12px;color:var(--text);font-family:inherit;resize:none;outline:none;line-height:1.6"></textarea>
       <div class="notes-actions">
         <button class="notes-action-btn" onclick="clearNotes()">🗑 Clear</button>
         <button class="notes-action-btn" onclick="copyNotes()">📋 Copy</button>
-        <button class="notes-action-btn primary" onclick="switchNotesTab('report')">✨ Draft Report →</button>
+        <button class="notes-action-btn primary" onclick="switchRPTab(&#39;report&#39;)">✨ Draft Report →</button>
       </div>
     </div>
+  </div>
 
-    <!-- REPORT PANE -->
-    <div id="report-tab-pane">
-      <div class="report-prompts">
-        <p>Quick prompts</p>
-        <button class="report-chip" onclick="runReport(this.textContent)">📊 Executive summary of current company</button>
-        <button class="report-chip" onclick="runReport(this.textContent)">📈 Key trends and highlights</button>
-        <button class="report-chip" onclick="runReport(this.textContent)">⚠️ Risks and areas of concern</button>
-        <button class="report-chip" onclick="runReport(this.textContent)">🔍 Compare all companies in portfolio</button>
-        <button class="report-chip" onclick="runReport(this.textContent)">📝 Draft IC update paragraph</button>
+  <!-- REPORT PANE -->
+  <div class="rp-pane" id="rp-pane-report">
+    <div class="report-prompts">
+      <p>Quick prompts</p>
+      <button class="report-chip" onclick="runReport(this.textContent)">📊 Executive summary of current company</button>
+      <button class="report-chip" onclick="runReport(this.textContent)">📈 Key trends and highlights</button>
+      <button class="report-chip" onclick="runReport(this.textContent)">⚠️ Risks and areas of concern</button>
+      <button class="report-chip" onclick="runReport(this.textContent)">🔍 Compare all companies in portfolio</button>
+      <button class="report-chip" onclick="runReport(this.textContent)">📝 Draft IC update paragraph</button>
+    </div>
+    <div class="report-divider"></div>
+    <div class="report-custom">
+      <input id="report-input" placeholder="Ask anything about the portfolio…" onkeydown="if(event.key===&#39;Enter&#39;) runReport(document.getElementById(&#39;report-input&#39;).value)">
+      <button id="report-send" onclick="runReport(document.getElementById(&#39;report-input&#39;).value)">↑</button>
+    </div>
+    <div id="report-output">
+      <div id="report-output-inner" class="placeholder">Your generated report will appear here…</div>
+      <div class="report-output-actions" id="report-output-actions" style="display:none">
+        <button class="copy-btn" onclick="copyReport()">📋 Copy report</button>
+        <button class="append-btn" onclick="appendToNotes()">📝 Append to notes</button>
       </div>
-      <div class="report-divider"></div>
-      <div class="report-custom">
-        <input id="report-input" placeholder="Ask anything about the portfolio…"
-          onkeydown="if(event.key==='Enter') runReport(document.getElementById('report-input').value)"/>
-        <button id="report-send" onclick="runReport(document.getElementById('report-input').value)">↑</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEFT PANEL: SharePoint browser -->
+<div id="sp-panel">
+  <div class="sp-header">
+    <div class="sp-title">📁 SharePoint</div>
+  </div>
+  <div class="sp-tree" id="sp-tree">
+    <div class="sp-connect-box">
+      <p>Connect SharePoint to load Excel files directly from your folders.</p>
+      <button class="sp-connect-btn" onclick="showSPConnect()">🔗 Connect SharePoint</button>
+    </div>
+    <div style="margin-top:14px">
+      <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 8px;margin-bottom:6px">EZG Portfolio — 38 companies</div>
+      <div class="sp-folder" onclick="toggleFolder(this)">
+        <span class="sp-folder-icon">📂</span> <span style="font-weight:600">EZG Portfolio</span>
+        <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
       </div>
-      <div id="report-output">
-        <div id="report-output-inner" class="placeholder">Your generated report will appear here…</div>
-        <div class="report-output-actions" id="report-output-actions" style="display:none">
-          <button class="copy-btn" onclick="copyReport()">📋 Copy report</button>
-          <button class="append-btn" onclick="appendToNotes()">📝 Append to notes</button>
+      <div class="sp-indent" style="display:none">
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Adjust
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Aiven
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Algolia
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Ankorstore
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> BackMarket
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Cognigy
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Commercetools
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> ContentSquare
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Criteo
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Dataiku
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Descartes
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Devo
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Dexory
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Doctolib
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Farfetch
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Fever
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Filigran
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Glovo
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Lumapps
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Malt
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> ManoMano
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Meero
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> MessageBird
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Mistral
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Neo4j
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+          <div class="sp-file">📊 Neo4j_Tracking.xlsx <span style="font-size:9px;color:var(--ez-teal)">(available)</span></div>
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Payfit
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> PeopleDoc
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Platform.sh
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Ppro
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Qonto
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Secret Escape
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Sophia Genetics
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Sorare
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Talend
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Thought Machine
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Tink
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Vestiaire Collective
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
+        </div>
+        <div class="sp-folder" onclick="toggleFolder(this)">
+          <span class="sp-folder-icon">📁</span> Younited
+          <span style="margin-left:auto;font-size:10px;opacity:.5">›</span>
+        </div>
+        <div class="sp-indent" style="display:none">
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Chat Panel -->
-<div id="chat-panel">
-  <div class="chat-header">
-    <div class="chat-header-left">
-      <div class="chat-dot"></div>
-      <div>
-        <div class="chat-title">Ask your portfolio</div>
-        <div class="chat-sub">Powered by Claude AI</div>
-      </div>
-    </div>
-    <button class="chat-close" onclick="toggleChat()">✕</button>
-  </div>
-
-  <div id="chat-messages">
-    <div class="msg ai">
-      <div class="msg-bubble">Hi Paolo! I can see your portfolio data. Ask me anything — comparisons, trends, specific KPIs, or ask me to filter the dashboard. What would you like to know?</div>
-      <div class="msg-time">Claude AI</div>
-    </div>
-  </div>
-
-  <div class="chat-suggestions" id="chat-suggestions">
-    <div style="font-size:9px;color:var(--muted);margin-bottom:2px">SUGGESTIONS</div>
-    <button class="suggestion-chip" onclick="sendSuggestion(this)">Show only Actual and Budget</button>
-    <button class="suggestion-chip" onclick="sendSuggestion(this)">Add OCF and Cash Balance</button>
-    <button class="suggestion-chip" onclick="sendSuggestion(this)">Show only ARR, Revenue, EBITDA</button>
-    <button class="suggestion-chip" onclick="sendSuggestion(this)">Restore all KPIs and series</button>
-  </div>
-
-  <div class="chat-input-wrap">
-    <textarea id="chat-input" placeholder="Ask about your portfolio…" rows="1"
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
-    <button id="chat-send" onclick="sendChat()">↑</button>
-  </div>
-</div>
-
-<!-- Chat Toggle -->
-<button id="chat-toggle" onclick="toggleChat()" title="Chat with your portfolio">💬</button>
+<!-- Floating toggle button -->
+<button id="chat-toggle" onclick="toggleRight()" title="Chat">💬</button>
 
 <!-- Toast -->
 <div id="toast"></div>
@@ -511,14 +922,43 @@ let apiKey = sessionStorage.getItem('ez_api_key') || '';
 let companies = [];
 let rawDataStore = {};
 let rawExcelStore = {};
-let activeSeries = {actual: true, budget: true, ezBP: true}; // which lines to show
+let activeSeries = {actual: true, budget: true, ezBP: true};
 let sel = -1, view = null;
+let tableView = false;
+let periodFrom = null, periodTo = null; // date range filter
+let fsChart = null; // fullscreen chart instance
 const charts = {};
 let pendingCompany = null; // holds parsed data waiting for confirmation
 
 // ─── Init ─────────────────────────────────────────────────────────────────
-if(apiKey) showDashboard();
+const EZG_PWD = 'EZG2026';
+const pwdOk = sessionStorage.getItem('ezg_pwd') === EZG_PWD;
+
+if(!pwdOk) showPasswordScreen();
+else if(apiKey) showDashboard();
 else showKeyScreen();
+
+function showPasswordScreen(){
+  document.getElementById('pwd-screen').style.display='block';
+  document.getElementById('key-screen').style.display='none';
+  document.getElementById('empty-state').style.display='none';
+  setTimeout(()=>document.getElementById('pwd-input').focus(),100);
+}
+
+function checkPassword(){
+  const v = document.getElementById('pwd-input').value.trim();
+  if(v === EZG_PWD){
+    sessionStorage.setItem('ezg_pwd', EZG_PWD);
+    document.getElementById('pwd-screen').style.display='none';
+    document.getElementById('pwd-error').style.display='none';
+    if(apiKey) showDashboard();
+    else showKeyScreen();
+  } else {
+    document.getElementById('pwd-error').style.display='block';
+    document.getElementById('pwd-input').value='';
+    document.getElementById('pwd-input').focus();
+  }
+}
 
 // ─── Key management ───────────────────────────────────────────────────────
 function showKeyScreen(){
@@ -533,8 +973,8 @@ function showDashboard(){
   document.getElementById('key-screen').style.display='none';
   document.getElementById('key-settings-btn').style.display='block';
   document.getElementById('add-btn-label').style.display='flex';
-  document.getElementById('chat-nav-btn').style.display='block';
-  document.getElementById('notes-nav-btn').style.display='block';
+  document.getElementById('right-nav-btn').style.display='block';
+  document.getElementById('sp-nav-btn').style.display='block';
   if(companies.length===0){
     document.getElementById('empty-state').style.display='block';
     document.getElementById('company-view').style.display='none';
@@ -705,45 +1145,11 @@ Return this exact JSON structure:
   }
 }
 
-// ─── Preview Modal ────────────────────────────────────────────────────────
+// ─── Preview Modal (bypassed — goes straight to KPI selector) ─────────────
 function showPreview(data, filename){
   pendingCompany = data;
-  document.getElementById('preview-title').textContent = `KPIs found in ${data.companyName}`;
-
-  const allViews = Object.keys(data.views||{});
-  const totalKPIs = allViews.reduce((s,v)=>s+(data.views[v]?.kpis?.length||0),0);
-  document.getElementById('preview-sub').textContent =
-    `${totalKPIs} KPIs detected across ${allViews.join(', ')} views. Click to deselect any you don't need.`;
-
-  const grid = document.getElementById('kpi-preview-grid');
-  grid.innerHTML = '';
-
-  allViews.forEach(viewName=>{
-    const sheet = data.views[viewName];
-    if(!sheet?.kpis?.length) return;
-
-    const header = document.createElement('div');
-    header.style.cssText='grid-column:1/-1;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 0 2px';
-    header.textContent = viewName + ' — ' + sheet.periods.length + ' periods';
-    grid.appendChild(header);
-
-    sheet.kpis.forEach(kpi=>{
-      const item = document.createElement('div');
-      item.className='kpi-preview-item selected';
-      item.dataset.view=viewName;
-      item.dataset.kpi=kpi.name;
-
-      const hasBudget = kpi.budget?.some(v=>v!=null);
-      const hasEZ = kpi.ezBP?.some(v=>v!=null);
-      const series = ['Actual', hasBudget?'Budget':null, hasEZ?'EZ BP':null].filter(Boolean).join(' · ');
-
-      item.innerHTML=`<div class="kpi-p-name">${kpi.name}</div><div class="kpi-p-meta">${series}</div>`;
-      item.addEventListener('click',()=>item.classList.toggle('selected'));
-      grid.appendChild(item);
-    });
-  });
-
-  document.getElementById('preview-overlay').style.display='flex';
+  // Skip old preview, open KPI selector directly with all unchecked
+  openKpiSelector(data, false);
 }
 
 function closePreview(){
@@ -751,45 +1157,127 @@ function closePreview(){
   pendingCompany=null;
 }
 
+// KPI selector state
+let kpiSelData = null; // {company, viewNames, currentView}
+
 function confirmKPIs(){
   if(!pendingCompany) return;
+  const pending = pendingCompany;
+  closePreview();
+  openKpiSelector(pending, false); // fresh upload → all unchecked
+}
 
-  // Filter only selected KPIs
-  const selected = [...document.querySelectorAll('.kpi-preview-item.selected')];
-  const selectedMap = {};
-  selected.forEach(el=>{
-    if(!selectedMap[el.dataset.view]) selectedMap[el.dataset.view]=[];
-    selectedMap[el.dataset.view].push(el.dataset.kpi);
+function openKpiSelectorEdit(){
+  const c = companies[sel];
+  if(!c) return;
+  const raw = rawDataStore[c.name];
+  if(!raw || !raw.views) { showToast('⚠ No raw data — please reload the file'); return; }
+  const pending = raw.companyName ? raw : { companyName: c.name, currency: c.currency, views: raw.views };
+  openKpiSelector(pending, true); // editing → pre-check current selection
+}
+
+function openKpiSelector(pending, isEdit=false){
+  kpiSelData = {pending, currentView: null, isEdit};
+  document.getElementById('kpi-sel-company-name').textContent = 
+    `${pending.companyName} — select metrics to display`;
+  
+  const views = Object.keys(pending.views||{});
+  kpiSelData.currentView = views[0];
+  
+  // Build tabs
+  const tabsEl = document.getElementById('kpi-sel-tabs');
+  tabsEl.innerHTML = views.map(v=>
+    `<button class="kpi-sel-tab ${v===kpiSelData.currentView?'active':''}" onclick="switchKpiSelView('${v}')">${v.charAt(0).toUpperCase()+v.slice(1)}</button>`
+  ).join('');
+  
+  renderKpiSelGrid();
+  document.getElementById('kpi-selector-modal').classList.add('open');
+}
+
+function switchKpiSelView(v){
+  // Save current selections before switching
+  saveKpiSelections();
+  kpiSelData.currentView = v;
+  document.querySelectorAll('.kpi-sel-tab').forEach(t=>
+    t.classList.toggle('active', t.textContent.toLowerCase()===v));
+  renderKpiSelGrid();
+}
+
+function renderKpiSelGrid(){
+  const v = kpiSelData.currentView;
+  const kpis = kpiSelData.pending.views?.[v]?.kpis || [];
+  const grid = document.getElementById('kpi-sel-grid');
+  // If editing an existing company, pre-check currently visible KPIs
+  // If new load, start unchecked so user picks what they want
+  const existing = companies.find(c=>c.name===kpiSelData.pending.companyName);
+  const currentKPIs = existing?.views?.[v]?.kpis?.map(k=>k.name) || [];
+  const isEdit = kpiSelData.isEdit && currentKPIs.length > 0;
+  grid.innerHTML = kpis.map(k=>{
+    const checked = isEdit ? currentKPIs.includes(k.name) : false;
+    return `<label class="kpi-sel-item ${checked?'on':''}" data-kpi="${k.name}" data-view="${v}">
+      <input type="checkbox" ${checked?'checked':''} onchange="this.closest('.kpi-sel-item').classList.toggle('on',this.checked)">
+      <span style="font-size:11px">${k.name}</span>
+    </label>`;
+  }).join('');
+}
+
+function saveKpiSelections(){
+  if(!kpiSelData) return;
+  const v = kpiSelData.currentView;
+  if(!kpiSelData.selections) kpiSelData.selections = {};
+  kpiSelData.selections[v] = [...document.querySelectorAll('.kpi-sel-item')]
+    .filter(el=>el.querySelector('input').checked)
+    .map(el=>el.dataset.kpi);
+}
+
+function kpiSelAll(checked){
+  document.querySelectorAll('.kpi-sel-item').forEach(el=>{
+    el.querySelector('input').checked = checked;
+    el.classList.toggle('on', checked);
+  });
+}
+
+function applyKpiSelection(){
+  saveKpiSelections();
+  if(!kpiSelData) return;
+  const pending = kpiSelData.pending;
+  const selections = kpiSelData.selections || {};
+  
+  // For views not yet visited, select ALL kpis
+  Object.keys(pending.views||{}).forEach(v=>{
+    if(!selections[v]) selections[v] = (pending.views[v].kpis||[]).map(k=>k.name);
   });
 
-  // Build filtered company
   const company = {
-    name: pendingCompany.companyName,
-    logo: `https://logo.clearbit.com/${pendingCompany.companyName.toLowerCase().replace(/\s+/g,'')}.com`,
-    currency: pendingCompany.currency || '',
+    name: pending.companyName,
+    logo: `https://logo.clearbit.com/${pending.companyName.toLowerCase().replace(/\s+/g,'')}.com`,
+    currency: pending.currency || '',
     views: {}
   };
-
-  Object.keys(pendingCompany.views||{}).forEach(viewName=>{
-    const sheet = pendingCompany.views[viewName];
-    const allowed = selectedMap[viewName]||[];
+  Object.keys(pending.views||{}).forEach(viewName=>{
+    const sheet = pending.views[viewName];
+    const allowed = selections[viewName]||[];
     const filteredKPIs = (sheet.kpis||[]).filter(k=>allowed.includes(k.name));
     if(filteredKPIs.length>0){
       company.views[viewName]={periods:sheet.periods, kpis:filteredKPIs};
     }
   });
 
-  // Add or replace company
   const idx = companies.findIndex(c=>c.name===company.name);
   if(idx>=0){ companies[idx]=company; sel=idx; }
   else { companies.push(company); sel=companies.length-1; }
 
+  // Always update rawDataStore with the full pending (all KPIs, not filtered)
+  rawDataStore[company.name] = pending;
+  
+  kpiSelData = null;
+  document.getElementById('kpi-selector-modal').classList.remove('open');
   view=null;
-  closePreview();
   document.getElementById('empty-state').style.display='none';
   document.getElementById('company-view').style.display='block';
   renderNav();
   renderView();
+  showToast(`✅ ${company.name} loaded`);
 }
 
 // ─── Nav ─────────────────────────────────────────────────────────────────
@@ -818,6 +1306,26 @@ function renderView(){
     b.classList.toggle('active',v===view);
     b.disabled=!has;
   });
+  // Populate period selects
+  const periods = c.views[view]?.periods || [];
+  periodFrom = periodFrom && periods.includes(periodFrom) ? periodFrom : periods[0];
+  periodTo   = periodTo   && periods.includes(periodTo)   ? periodTo   : periods[periods.length-1];
+  populatePeriodSelects(periods);
+  renderMetrics();
+}
+
+function populatePeriodSelects(periods){
+  ['period-from','period-to'].forEach(id=>{
+    const sel = document.getElementById(id);
+    sel.innerHTML = periods.map(p=>`<option value="${p}">${p}</option>`).join('');
+  });
+  document.getElementById('period-from').value = periodFrom || periods[0];
+  document.getElementById('period-to').value   = periodTo   || periods[periods.length-1];
+}
+
+function applyPeriodFilter(){
+  periodFrom = document.getElementById('period-from').value;
+  periodTo   = document.getElementById('period-to').value;
   renderMetrics();
 }
 
@@ -831,10 +1339,95 @@ function renderMetrics(){
   Object.keys(charts).forEach(k=>delete charts[k]);
   const grid=document.getElementById('metrics-grid');
   if(!sheet){grid.innerHTML='<p style="color:var(--muted);padding:60px;text-align:center">No data.</p>';return;}
+  // Apply period filter
+  const allPeriods = sheet.periods;
+  const fromIdx = periodFrom ? Math.max(0, allPeriods.indexOf(periodFrom)) : 0;
+  const toIdx   = periodTo   ? Math.min(allPeriods.length-1, allPeriods.indexOf(periodTo)) : allPeriods.length-1;
+  const filteredPeriods = allPeriods.slice(fromIdx, toIdx+1);
+
+  // Slice KPI data to filtered range
+  const filteredKPIs = sheet.kpis.map(k=>({
+    ...k,
+    actual: k.actual?.slice(fromIdx, toIdx+1),
+    budget: k.budget?.slice(fromIdx, toIdx+1),
+    ezBP:   k.ezBP?.slice(fromIdx, toIdx+1),
+  }));
+
   document.getElementById('view-meta').textContent=
-    `${sheet.kpis.length} metrics · ${sheet.periods.length} periods · ${view}`;
-  grid.innerHTML=sheet.kpis.map(k=>buildCard(k,sheet.periods)).join('');
-  setTimeout(()=>sheet.kpis.forEach(k=>initChart(k,sheet.periods)),0);
+    `${filteredKPIs.length} metrics · ${filteredPeriods.length} periods · ${view}`;
+
+  if(tableView){
+    grid.style.display = 'block';
+    grid.innerHTML = buildTableView(filteredKPIs, filteredPeriods);
+  } else {
+    grid.style.display = 'grid';
+    grid.innerHTML = filteredKPIs.map(k=>buildCard(k,filteredPeriods)).join('');
+    setTimeout(()=>filteredKPIs.forEach(k=>initChart(k,filteredPeriods)),0);
+  }
+}
+
+function toggleTableView(){
+  tableView = !tableView;
+  document.getElementById('btn-table-view').style.display = tableView?'none':'inline-block';
+  document.getElementById('btn-chart-view').style.display = tableView?'inline-block':'none';
+  renderMetrics();
+}
+
+function buildTableView(kpis, periods){
+  const showAct = activeSeries.actual;
+  const showBud = activeSeries.budget;
+  const showEZ  = activeSeries.ezBP;
+
+  if(!kpis.length) return '<p style="color:var(--muted);padding:40px;text-align:center">No data.</p>';
+
+  // Rows = KPIs, Columns = Periods — fit to screen width
+  const nCols = periods.length;
+  // KPI col ~160px, Series col ~70px, rest split evenly
+  const thBase = `border-bottom:1px solid var(--border);padding:7px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);white-space:nowrap`;
+
+  let html = `<div style="width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:10px">
+    <table style="width:100%;border-collapse:collapse;table-layout:fixed">
+    <colgroup>
+      <col style="width:150px;min-width:120px">
+      <col style="width:62px;min-width:56px">
+      ${periods.map(()=>`<col style="min-width:60px">`).join('')}
+    </colgroup>
+    <thead style="position:sticky;top:0;z-index:2;background:var(--surface)">
+      <tr>
+        <th style="${thBase};text-align:left">KPI</th>
+        <th style="${thBase};text-align:left">Series</th>
+        ${periods.map(p=>`<th style="${thBase};text-align:right">${p}</th>`).join('')}
+      </tr>
+    </thead><tbody>`;
+
+  kpis.forEach((k,ki)=>{
+    const isPct = isPercent(k);
+    const rowBg = ki%2===0 ? '' : 'background:rgba(255,255,255,.015)';
+    const rows = [];
+    if(showAct && k.actual)                    rows.push({arr:k.actual,  label:'Actual', color:'var(--ez-teal)', weight:700});
+    if(showBud && k.budget?.some(v=>v!=null))  rows.push({arr:k.budget,  label:'Budget', color:'var(--amber)',   weight:400});
+    if(showEZ  && k.ezBP?.some(v=>v!=null))    rows.push({arr:k.ezBP,    label:'EZ BP',  color:'var(--purple)',  weight:400});
+
+    rows.forEach((r, ri)=>{
+      html += `<tr style="border-bottom:1px solid rgba(255,255,255,.04)">`;
+      if(ri===0){
+        html += `<td rowspan="${rows.length}" style="padding:8px 10px;vertical-align:middle;border-bottom:1px solid rgba(255,255,255,.08);border-right:1px solid rgba(255,255,255,.04)">
+          <span style="font-weight:700;color:var(--text);font-size:12px">${k.name}</span>
+        </td>`;
+      }
+      html += `<td style="padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.04)">
+        <span style="font-size:9px;color:${r.color};font-weight:600;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:3px;white-space:nowrap">${r.label}</span>
+      </td>`;
+      periods.forEach((_,i)=>{
+        const v = r.arr?.[i];
+        html += `<td style="text-align:right;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;color:${r.color};font-weight:${r.weight};white-space:nowrap">${v!=null?fmt(v,isPct):'<span style="opacity:.25">—</span>'}</td>`;
+      });
+      html += `</tr>`;
+    });
+  });
+
+  html += `</tbody></table></div>`;
+  return html;
 }
 
 function isPercent(kpi){
@@ -887,7 +1480,7 @@ function buildCard(kpi,periods){
   return `<div class="metric-card">
     <div class="card-head">
       <div><div class="card-label">${view}</div><div class="card-name">${kpi.name}</div></div>
-      ${badge}
+      <div style="display:flex;align-items:center;gap:8px">${badge}<button onclick="openFullscreen(this)" data-cid="${cid}" data-name="${kpi.name.replace(/['\\]/g,'_')}" title="Fullscreen" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 5px;border-radius:4px" onmouseover="this.style.color='var(--ez-teal)'" onmouseout="this.style.color='var(--muted)'">⛶</button></div>
     </div>${krow}
     <div class="chart-wrap"><canvas id="${cid}"></canvas></div>
     <div class="chart-legend">
@@ -920,8 +1513,8 @@ function initChart(kpi,periods){
           callbacks:{label:ctx=>' '+ctx.dataset.label+': '+ctx.parsed.y+sfx}}
       },
       scales:{
-        x:{grid:{color:'#0f2036'},ticks:{color:'#3d5a78',font:{size:9},maxTicksLimit:8},border:{display:false}},
-        y:{grid:{color:'#0f2036'},ticks:{color:'#3d5a78',font:{size:9},
+        x:{grid:{display:false},ticks:{color:'#3d5a78',font:{size:9},maxTicksLimit:8},border:{display:false}},
+        y:{grid:{display:false},ticks:{color:'#3d5a78',font:{size:9},
           callback:v=>Math.abs(v)>=1000?(v/1000).toFixed(0)+'K':v+sfx},border:{display:false}}
       }
     }
@@ -1025,23 +1618,206 @@ function getSynonyms(name){
   }
   return [name];
 }
-let notesOpen = false;
-
-function toggleNotes(){
-  notesOpen = !notesOpen;
-  document.getElementById('notes-panel').classList.toggle('open', notesOpen);
-  document.body.classList.toggle('notes-open', notesOpen);
-  const btn = document.getElementById('notes-nav-btn');
-  if(btn) btn.textContent = notesOpen ? '✕ Close Notes' : '📝 Notes';
+// ─── Fullscreen chart ────────────────────────────────────────────────────
+function openFullscreen(btn){
+  const cid  = btn.dataset.cid;
+  const name = btn.dataset.name;
+  const srcChart = charts[cid];
+  if(!srcChart){ showToast('⚠ No chart data found'); return; }
+  document.getElementById('fs-title').textContent = name;
+  const modal = document.getElementById('fullscreen-modal');
+  modal.style.display='flex';
+  if(fsChart) fsChart.destroy();
+  const canvas = document.getElementById('fs-canvas');
+  canvas.width = canvas.parentElement.clientWidth - 56;
+  fsChart = new Chart(canvas, {
+    type: srcChart.config.type,
+    data: JSON.parse(JSON.stringify(srcChart.config.data)),
+    options: JSON.parse(JSON.stringify(srcChart.config.options))
+  });
+}
+function closeFullscreen(){
+  document.getElementById('fullscreen-modal').style.display='none';
+  if(fsChart){ fsChart.destroy(); fsChart=null; }
 }
 
-function switchNotesTab(tab){
-  document.getElementById('notes-tab-pane').style.display = tab==='notes'?'flex':'none';
-  document.getElementById('report-tab-pane').style.display = tab==='report'?'flex':'none';
-  document.getElementById('tab-notes').classList.toggle('active', tab==='notes');
-  document.getElementById('tab-report').classList.toggle('active', tab==='report');
-  if(tab==='report') document.getElementById('report-input').focus();
+// ─── Export ──────────────────────────────────────────────────────────────
+function openExportModal(){
+  const checks = document.getElementById('export-company-checks');
+  checks.innerHTML = companies.map((c,i)=>
+    `<label class="export-check"><input type="checkbox" value="${i}" ${i===sel?'checked':''}> ${c.name}</label>`
+  ).join('');
+  const c = companies[sel];
+  const periods = (c?.views[view]||c?.views[Object.keys(c.views)[0]])?.periods || [];
+  ['export-from','export-to'].forEach(id=>{
+    const s = document.getElementById(id);
+    s.innerHTML = periods.map(p=>`<option value="${p}">${p}</option>`).join('');
+  });
+  if(periods.length){
+    document.getElementById('export-from').value = periods[0];
+    document.getElementById('export-to').value = periods[periods.length-1];
+  }
+  document.getElementById('export-modal').classList.add('open');
 }
+function closeExportModal(){
+  document.getElementById('export-modal').classList.remove('open');
+}
+
+function getExportConfig(){
+  const selCompanies = [...document.querySelectorAll('#export-company-checks input:checked')]
+    .map(cb=>companies[parseInt(cb.value)]).filter(Boolean);
+  const from = document.getElementById('export-from').value;
+  const to   = document.getElementById('export-to').value;
+  return {
+    selCompanies, from, to,
+    inclActual: document.getElementById('exp-actual').checked,
+    inclBudget: document.getElementById('exp-budget').checked,
+    inclEZBP:   document.getElementById('exp-ezbp').checked
+  };
+}
+
+function exportPDF(){
+  const {selCompanies, from, to, inclActual, inclBudget, inclEZBP} = getExportConfig();
+  if(!selCompanies.length){ showToast('⚠ Select at least one company'); return; }
+  closeExportModal();
+  showToast('📄 Opening PDF…');
+  let content = `<html><head><style>
+    *{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#1a1a2e;padding:24px;background:#fff}
+    h1{font-size:20px;color:#003057;margin-bottom:4px}
+    h2{font-size:14px;color:#003057;margin:20px 0 6px;border-bottom:2px solid #00B4A0;padding-bottom:3px}
+    table{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:14px;page-break-inside:avoid}
+    th{background:#003057;color:#fff;padding:5px 8px;text-align:left;font-size:9px}
+    td{padding:4px 8px;border-bottom:1px solid #eee}
+    .actual{color:#00B4A0;font-weight:700}.budget{color:#f5a623}.ezbp{color:#8f9cf5}
+    .foot{font-size:9px;color:#999;margin-top:16px;border-top:1px solid #eee;padding-top:8px}
+    @media print{body{padding:12px}}
+  </style></head><body>
+  <h1>Eurazeo Growth — Portfolio Monitoring</h1>
+  <p style="font-size:11px;color:#666;margin-bottom:18px">Period: <b>${from} – ${to}</b> &nbsp;|&nbsp; View: <b>${view||'—'}</b> &nbsp;|&nbsp; Generated: <b>${new Date().toLocaleDateString('en-GB')}</b></p>`;
+  selCompanies.forEach(c=>{
+    const sheet = c.views[view] || c.views[Object.keys(c.views)[0]];
+    if(!sheet){ content+=`<h2>${c.name}</h2><p style="color:#999;font-size:11px">No data for this view.</p>`; return; }
+    const allP=sheet.periods, fi=Math.max(0,allP.indexOf(from)), ti=allP.indexOf(to)>=0?allP.indexOf(to):allP.length-1;
+    const periods=allP.slice(fi,ti+1);
+    content+=`<h2>${c.name} ${c.currency?`(${c.currency})`:''}</h2>`;
+    content+=`<table><thead><tr><th>KPI</th><th>Series</th>${periods.map(p=>`<th>${p}</th>`).join('')}</tr></thead><tbody>`;
+    sheet.kpis.forEach(k=>{
+      const isPct=isPercent(k), sl=(arr)=>arr?.slice(fi,fi+periods.length)||[];
+      const fv=(v)=>v!=null?(isPct?(v*100).toFixed(1)+'%':v):'-';
+      if(inclActual&&k.actual){ content+=`<tr><td><b>${k.name}</b></td><td class="actual">Actual</td>${sl(k.actual).map(v=>`<td class="actual">${fv(v)}</td>`).join('')}</tr>`; }
+      if(inclBudget&&k.budget?.some(v=>v!=null)){ content+=`<tr><td>${k.name}</td><td class="budget">Budget</td>${sl(k.budget).map(v=>`<td class="budget">${fv(v)}</td>`).join('')}</tr>`; }
+      if(inclEZBP&&k.ezBP?.some(v=>v!=null)){ content+=`<tr><td>${k.name}</td><td class="ezbp">EZ BP</td>${sl(k.ezBP).map(v=>`<td class="ezbp">${fv(v)}</td>`).join('')}</tr>`; }
+    });
+    content+=`</tbody></table>`;
+  });
+  content+=`<div class="foot">Eurazeo Growth · Confidential · ${new Date().toLocaleDateString('en-GB')}</div></body></html>`;
+  const w=window.open('','_blank');
+  w.document.write(content); w.document.close(); w.focus();
+  setTimeout(()=>w.print(),600);
+}
+
+function exportExcel(){
+  const {selCompanies, from, to, inclActual, inclBudget, inclEZBP} = getExportConfig();
+  if(!selCompanies.length){ showToast('⚠ Select at least one company'); return; }
+  closeExportModal();
+  showToast('📊 Building Excel file…');
+
+  const wb = XLSX.utils.book_new();
+
+  selCompanies.forEach(c=>{
+    const sheet = c.views[view] || c.views[Object.keys(c.views)[0]];
+    if(!sheet) return;
+    const allP=sheet.periods;
+    const fi=Math.max(0,allP.indexOf(from));
+    const ti=allP.indexOf(to)>=0?allP.indexOf(to):allP.length-1;
+    const periods=allP.slice(fi,ti+1);
+
+    const aoa = []; // array of arrays
+
+    // Header row
+    aoa.push([`${c.name} ${c.currency?'('+c.currency+')':''}  |  Period: ${from} – ${to}`, ...new Array(periods.length+1).fill('')]);
+    aoa.push([]); // blank row
+    aoa.push(['KPI', 'Series', ...periods]);
+
+    sheet.kpis.forEach(k=>{
+      const isPct = isPercent(k);
+      const sl = (arr) => arr?.slice(fi, fi+periods.length).map(v=> v!=null ? (isPct ? parseFloat((v*100).toFixed(2)) : v) : '') || [];
+      if(inclActual && k.actual)
+        aoa.push([k.name, 'Actual', ...sl(k.actual)]);
+      if(inclBudget && k.budget?.some(v=>v!=null))
+        aoa.push([k.name, 'Budget', ...sl(k.budget)]);
+      if(inclEZBP && k.ezBP?.some(v=>v!=null))
+        aoa.push([k.name, 'EZ BP', ...sl(k.ezBP)]);
+    });
+
+    aoa.push([]); // blank row
+    aoa.push(['Generated by Eurazeo Growth Portfolio Monitor', new Date().toLocaleDateString('en-GB')]);
+
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+    // Column widths
+    ws['!cols'] = [
+      {wch:28}, // KPI name
+      {wch:9},  // Series
+      ...periods.map(()=>({wch:10}))
+    ];
+
+    // Sheet name max 31 chars
+    const sheetName = c.name.substring(0,31).replace(/[:\\/?*\[\]]/g,'_');
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  });
+
+  const filename = `EZG_Portfolio_${from}_${to}.xlsx`;
+  XLSX.writeFile(wb, filename);
+  showToast('✅ Excel downloaded!');
+}
+
+let rightOpen = false, spOpen = false;
+
+function toggleRight(tab){
+  rightOpen = !rightOpen;
+  document.getElementById('right-panel').classList.toggle('open', rightOpen);
+  document.body.classList.toggle('right-open', rightOpen);
+  const btn = document.getElementById('right-nav-btn');
+  if(btn) btn.textContent = rightOpen ? '✕ Close Chat' : '💬 Chat';
+  document.getElementById('chat-toggle').classList.toggle('hidden', rightOpen);
+  if(rightOpen){
+    if(tab) switchRPTab(tab);
+    document.getElementById('chat-input').focus();
+  }
+}
+
+function switchRPTab(tab){
+  ['chat','notes','report'].forEach(t=>{
+    document.getElementById('rp-pane-'+t).classList.toggle('active', t===tab);
+    document.getElementById('rp-tab-'+t).classList.toggle('active', t===tab);
+  });
+  if(tab==='chat') document.getElementById('chat-input')?.focus();
+}
+
+function toggleSP(){
+  spOpen = !spOpen;
+  document.getElementById('sp-panel').classList.toggle('open', spOpen);
+  document.body.classList.toggle('sp-open', spOpen);
+  const btn = document.getElementById('sp-nav-btn');
+  if(btn) btn.textContent = spOpen ? '✕ Close EZG Portfolio' : '📁 EZG Portfolio';
+}
+
+function toggleFolder(el){
+  const sub = el.nextElementSibling;
+  if(sub) sub.style.display = sub.style.display==='none' ? 'block' : 'none';
+  const icon = el.querySelector('.sp-folder-icon');
+  if(icon) icon.textContent = icon.textContent.includes('📂') ? '📁' : '📂';
+}
+
+function showSPConnect(){
+  showToast('⚠️ SharePoint API key required — contact IT for Azure AD credentials');
+}
+
+function toggleNotes(){ toggleRight('notes'); }
+
+function switchNotesTab(tab){ switchRPTab(tab); }
+
 
 function clearNotes(){
   if(confirm('Clear all notes?')) document.getElementById('notes-textarea').value='';
@@ -1058,7 +1834,7 @@ function appendToNotes(){
   const report = document.getElementById('report-output-inner').textContent;
   const notes = document.getElementById('notes-textarea');
   notes.value += (notes.value ? '\n\n---\n\n' : '') + report;
-  switchNotesTab('notes');
+  switchRPTab('notes');
   showToast('Appended to notes!');
 }
 
@@ -1083,31 +1859,28 @@ PORTFOLIO DATA:
 ${buildDashboardContext()}
 ${notes?'\nANALYST NOTES:\n'+notes:''}
 
-Use specific numbers. Be insightful, not generic. Professional but direct tone.`,
+Use specific numbers. Be insightful, not generic. Professional but direct tone.
+IMPORTANT: Do NOT use any markdown formatting — no asterisks, no bold, no bullet symbols, no headers with #. Write in plain text with clean paragraphs and simple dashes for lists if needed.`,
         messages:[{role:'user',content:prompt}]
       })
     });
     const data = await resp.json();
     out.classList.remove('placeholder');
-    out.textContent = data.content[0].text;
+    const clean = data.content[0].text
+      .replace(/\*\*(.+?)\*\*/g,'$1')   // bold
+      .replace(/\*(.+?)\*/g,'$1')        // italic
+      .replace(/^#{1,4}\s+/gm,'')        // headers
+      .replace(/^\s*[-*]\s+/gm,'- ');    // normalize bullets
+    out.textContent = clean;
     document.getElementById('report-output-actions').style.display='flex';
   } catch(err){ out.textContent='Error: '+err.message; }
   document.getElementById('report-send').disabled=false;
 }
 
 // ─── Chat ───────────────────────────────────────────────────────────────
-let chatOpen = false;
 let chatHistory = [];
 
-function toggleChat(){
-  chatOpen = !chatOpen;
-  document.getElementById('chat-panel').classList.toggle('open', chatOpen);
-  document.body.classList.toggle('chat-open', chatOpen);
-  document.getElementById('chat-toggle').classList.toggle('hidden', chatOpen);
-  const navBtn = document.getElementById('chat-nav-btn');
-  if(navBtn) navBtn.textContent = chatOpen ? '✕ Close Chat' : '💬 Chat';
-  if(chatOpen) document.getElementById('chat-input').focus();
-}
+function toggleChat(){ toggleRight('chat'); }
 
 function sendSuggestion(btn){
   document.getElementById('chat-input').value = btn.textContent;
@@ -1150,6 +1923,7 @@ ${context}
 
 CURRENT CHART SERIES VISIBLE: Actual=${activeSeries.actual}, Budget=${activeSeries.budget}, EZ BP=${activeSeries.ezBP}
 
+IMPORTANT: Never use markdown formatting. No asterisks, no bold, no # headers. Plain text only, use simple dashes for lists.
 ACTIONS YOU CAN TAKE:
 1. Show/hide chart series (Actual, Budget, EZ BP lines):
    <action>{"type":"filter_series","show":["actual","budget"]}</action>
@@ -1190,6 +1964,10 @@ Always execute the action AND give a brief confirmation. Never refuse — always
     // Parse and execute any actions
     const actionMatch = text.match(/<action>([\s\S]*?)<\/action>/);
     let displayText = text.replace(/<action>[\s\S]*?<\/action>/g, '').trim();
+    displayText = displayText
+      .replace(/\*\*(.+?)\*\*/g,'$1')
+      .replace(/\*(.+?)\*/g,'$1')
+      .replace(/^#{1,4}\s+/gm,'');
 
     thinking.remove();
     appendMsg('ai', displayText);
@@ -1353,5 +2131,6 @@ function autoResize(el){
 }
 document.getElementById('chat-input').addEventListener('input', function(){ autoResize(this); });
 </script>
-</body>
-</html>
+
+
+</body></html>
